@@ -1,0 +1,102 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: Grid Status
+providerId: gridstatus
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Day-Ahead Prices
+- Electricity
+- Grid Data
+- Energy Markets
+- FinOps
+- Cost Management
+- FOCUS
+description: >-
+  FinOps view of Grid Status spend. The open-source gridstatus Python library is
+  free (BSD-3-Clause) - in that model your cost is your own compute and the
+  operational burden of scraping raw ISO/RTO sources yourself. The hosted Grid
+  Status API is metered on rows returned per month above a free allowance
+  (documented at 500,000 rows per month on the free plan), with paid plans that
+  raise row and rate limits and can be scoped to just the ISOs/RTOs you need.
+  Daily peak reports and other premium surfaces require a paid plan. Enterprise
+  arrangements, including data delivery in Snowflake, are negotiated directly.
+notes: >-
+  Paid per-unit rates are not reconciled here; verify on the Grid Status pricing
+  page. The dominant cost driver is rows returned - real-time price datasets
+  consume allowance very quickly, so bound every query with limit, select only
+  needed columns, resample to coarser frequencies where possible, and use bulk
+  CSV exports for large historical backfills.
+sources:
+- https://www.gridstatus.io/pricing
+- https://www.gridstatus.io/products/api
+- https://github.com/gridstatus/gridstatusio
+- https://focus.finops.org/focus-specification/v1-3/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: Grid Status
+serviceCategory: Analytics and Data
+billingModel:
+  pricingCategory: Usage-Based
+  billingFrequency: Monthly
+  billingCurrency: USD
+  chargeCategories:
+  - Usage
+  - Purchase
+  - Adjustment
+focusColumns:
+  ServiceName: Grid Status API
+  ServiceCategory: Analytics and Data
+  ProviderName: Grid Status
+  PublisherName: Grid Status
+  InvoiceIssuerName: Grid Status
+  BillingCurrency: USD
+  ChargeCategory: Usage
+  PricingCategory: Usage-Based
+meters:
+- name: api_rows_returned
+  description: Rows returned by dataset query responses; the primary metered unit against the monthly plan allowance.
+  unit: rows
+  aggregation: sum
+  dimensions:
+  - account
+  - dataset
+  - iso
+- name: api_requests
+  description: API requests made in the billing period, tracked against the plan requests limit.
+  unit: requests
+  aggregation: sum
+  dimensions:
+  - account
+  - endpoint
+- name: bulk_csv_downloads
+  description: Per-day bulk CSV export files downloaded via presigned S3 URLs.
+  unit: files
+  aggregation: sum
+  dimensions:
+  - account
+  - dataset
+- name: open_source_compute
+  description: Your own compute and maintenance cost when pulling raw ISO/RTO data with the free gridstatus library (no Grid Status invoice).
+  unit: hours
+  aggregation: sum
+  dimensions:
+  - deployment
+principles:
+- name: Visibility
+  description: Poll GET /api_usage to track rows returned and requests against plan limits during the current billing period; alert before the allowance is exhausted.
+- name: Allocation
+  description: Issue separate API keys per team or workload where possible, and tag internal consumers by dataset and ISO so row consumption maps to cost centers.
+- name: Optimization
+  description: Bound every query with limit, request only needed columns, resample to the coarsest frequency the use case allows, poll dataset-updates before re-querying, and prefer bulk CSV exports for historical backfills; scope paid plans to only the ISOs/RTOs you need.
+- name: Accountability
+  description: Assign an owner per API key; review monthly rows-returned consumption against the plan allowance and decide between plan changes and shifting bulk work to exports or the open-source library.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

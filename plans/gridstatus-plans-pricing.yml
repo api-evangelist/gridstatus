@@ -1,0 +1,135 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Grid Status
+providerId: gridstatus
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Day-Ahead Prices
+- Electricity
+- Grid Data
+- Energy Markets
+- Plans
+description: >-
+  Grid Status has two consumption models. The open-source gridstatus Python
+  library (BSD-3-Clause) pulls raw data directly from ISO/RTO sources for free -
+  no Grid Status account required. The hosted Grid Status API is metered on rows
+  returned per month with a free tier (documented at 500,000 rows per month in
+  the gridstatusio client README) and paid plans; the API product page markets
+  flexible pricing where you pay for just the ISOs/RTOs you need, or everything.
+  Some endpoints, such as the daily peak reports, require a paid plan. The
+  public pricing page (gridstatus.io/pricing) is a JavaScript application whose
+  tier names and dollar amounts could not be captured at review time, so exact
+  paid rates are not reconciled here.
+notes: >-
+  Row consumption is very easy to exceed when querying real-time price datasets;
+  Grid Status recommends passing a limit on every query. The /api_usage endpoint
+  reports your plan name, rows-returned limit, requests limit, rows-per-response
+  limit, and per-second/minute/hour rate limits for the current billing period.
+  Verify current tiers and rates on the Grid Status pricing page during
+  reconciliation.
+sources:
+- https://www.gridstatus.io/pricing
+- https://www.gridstatus.io/products/api
+- https://github.com/gridstatus/gridstatusio
+- https://docs.gridstatus.io/developers/api-reference/api-usage
+plans:
+- id: gridstatus-open-source
+  name: Open Source Library (gridstatus)
+  type: free
+  description: >-
+    The gridstatus Python library is BSD-3-Clause licensed and free. It provides
+    a consistent interface for pulling minimally-processed electricity supply,
+    demand, and pricing data directly from CAISO, ERCOT, ISONE, MISO, NYISO,
+    PJM, SPP, IESO, AESO, and EIA sources - no Grid Status API key required.
+  entries:
+  - label: Library Usage
+    name: open_source_usage
+    type: usage
+    metric: requests
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: free (data pulled directly from ISO/RTO sources)
+    userMultiplied: false
+  elements:
+  - name: CAISO, ERCOT, ISONE, MISO, NYISO, PJM, SPP, IESO, AESO, EIA Sources
+  - name: LMP and Settlement Point Prices
+  - name: Load, Fuel Mix, Storage
+  - name: Pandas DataFrames
+- id: gridstatus-api-free
+  name: Hosted API - Free
+  type: free
+  description: >-
+    Free tier of the hosted Grid Status API. Documented in the gridstatusio
+    client README as limited to 500,000 rows returned per month - easy to
+    exceed when querying real-time price datasets, so add a limit to every
+    query.
+  entries:
+  - label: Rows Returned
+    name: free_rows_returned
+    type: usage
+    metric: rows
+    limit: 500000
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: $0 up to 500,000 rows per month
+    userMultiplied: false
+  elements:
+  - name: Datasets Catalog and Metadata
+  - name: Dataset Query (JSON and CSV)
+  - name: API Usage Endpoint
+- id: gridstatus-api-paid
+  name: Hosted API - Paid Plans
+  type: usage
+  description: >-
+    Paid plans raise the monthly rows-returned allowance and rate limits and
+    unlock paid-only endpoints such as daily peak reports. The API product page
+    markets flexible pricing - pay for just the ISOs/RTOs you need, or
+    everything. Exact tier names and dollar amounts are published on the
+    pricing page and are not reconciled here.
+  entries:
+  - label: Rows Returned
+    name: paid_rows_returned
+    type: usage
+    metric: rows
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1000000
+    price: per plan (see pricing page)
+    userMultiplied: false
+  elements:
+  - name: Higher Row and Rate Limits
+  - name: Daily Peak Reports
+  - name: Bulk CSV Exports
+  - name: Per-ISO Data Packages
+- id: gridstatus-enterprise
+  name: Enterprise / Custom
+  type: enterprise
+  description: >-
+    Custom arrangements for high-volume consumers, including access to data in
+    Snowflake and negotiated terms. Contact Grid Status at
+    contact@gridstatus.io.
+  entries:
+  - label: Enterprise Agreement
+    name: enterprise
+    type: flat
+    metric: contract
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: contact sales
+    userMultiplied: false
+  elements:
+  - name: Custom Volume Pricing
+  - name: All ISOs/RTOs
+  - name: Support
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

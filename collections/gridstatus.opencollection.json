@@ -1,0 +1,528 @@
+{
+ "opencollection": "1.0.0",
+ "info": {
+  "name": "Grid Status API",
+  "version": "1.3.0"
+ },
+ "request": {
+  "auth": {
+   "type": "apikey",
+   "key": "x-api-key",
+   "value": "{{apiKey}}",
+   "placement": "header"
+  }
+ },
+ "items": [
+  {
+   "info": {
+    "name": "API Info",
+    "type": "folder"
+   },
+   "items": [
+    {
+     "info": {
+      "name": "Get API info.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/"
+     },
+     "docs": "Returns the API name and version."
+    }
+   ]
+  },
+  {
+   "info": {
+    "name": "Datasets",
+    "type": "folder"
+   },
+   "items": [
+    {
+     "info": {
+      "name": "List datasets.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/datasets"
+     },
+     "docs": "List all published datasets you have access to."
+    },
+    {
+     "info": {
+      "name": "Get dataset metadata.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/datasets/:dataset_id",
+      "params": [
+       {
+        "name": "dataset_id",
+        "value": "",
+        "type": "path",
+        "description": ""
+       }
+      ]
+     },
+     "docs": "Fetch metadata for a single dataset - columns, time range, frequency, source."
+    },
+    {
+     "info": {
+      "name": "Get dataset audit.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/datasets/:dataset_id/audit",
+      "params": [
+       {
+        "name": "dataset_id",
+        "value": "",
+        "type": "path",
+        "description": ""
+       }
+      ]
+     },
+     "docs": "Ingest audit history for a dataset."
+    },
+    {
+     "info": {
+      "name": "Get dataset updates.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/dataset-updates/:dataset_id",
+      "params": [
+       {
+        "name": "dataset_id",
+        "value": "",
+        "type": "path",
+        "description": ""
+       }
+      ]
+     },
+     "docs": "Recent row insert/update activity for a dataset, including backfills."
+    }
+   ]
+  },
+  {
+   "info": {
+    "name": "Query Data",
+    "type": "folder"
+   },
+   "items": [
+    {
+     "info": {
+      "name": "Query a dataset.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/datasets/:dataset_id/query",
+      "params": [
+       {
+        "name": "dataset_id",
+        "value": "",
+        "type": "path",
+        "description": ""
+       },
+       {
+        "name": "start_time",
+        "value": "",
+        "type": "query",
+        "description": "Start of the time range (ISO 8601)."
+       },
+       {
+        "name": "end_time",
+        "value": "",
+        "type": "query",
+        "description": "End of the time range (ISO 8601)."
+       },
+       {
+        "name": "limit",
+        "value": "",
+        "type": "query",
+        "description": "Maximum rows to return across all pages."
+       },
+       {
+        "name": "resample_frequency",
+        "value": "",
+        "type": "query",
+        "description": "Resample frequency, e.g. 1 hour or 1 day."
+       },
+       {
+        "name": "return_format",
+        "value": "",
+        "type": "query",
+        "description": "json or csv."
+       }
+      ]
+     },
+     "docs": "Query dataset rows (e.g. ercot_spp_day_ahead_hourly day-ahead prices) with time filters, resampling, pagination, and JSON or CSV output."
+    },
+    {
+     "info": {
+      "name": "Query a dataset by column value.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/datasets/:dataset_id/query/:filter_column_id/:filter_value_path",
+      "params": [
+       {
+        "name": "dataset_id",
+        "value": "",
+        "type": "path",
+        "description": ""
+       },
+       {
+        "name": "filter_column_id",
+        "value": "",
+        "type": "path",
+        "description": ""
+       },
+       {
+        "name": "filter_value_path",
+        "value": "",
+        "type": "path",
+        "description": ""
+       }
+      ]
+     },
+     "docs": "Shortcut query filtered by a single column value, such as a settlement point or location."
+    }
+   ]
+  },
+  {
+   "info": {
+    "name": "Pricing Locations",
+    "type": "folder"
+   },
+   "items": [
+    {
+     "info": {
+      "name": "List pricing locations.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/pricing_locations"
+     },
+     "docs": "List pricing locations (nodes, hubs, and zones) behind LMP datasets."
+    },
+    {
+     "info": {
+      "name": "List nearby pricing locations.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/pricing_locations/nearby",
+      "params": [
+       {
+        "name": "latitude",
+        "value": "",
+        "type": "query",
+        "description": "Latitude of the point of interest."
+       },
+       {
+        "name": "longitude",
+        "value": "",
+        "type": "query",
+        "description": "Longitude of the point of interest."
+       }
+      ]
+     },
+     "docs": "Find pricing locations near a latitude/longitude point."
+    },
+    {
+     "info": {
+      "name": "Get pricing location.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/pricing_locations/:gs_entity_id",
+      "params": [
+       {
+        "name": "gs_entity_id",
+        "value": "",
+        "type": "path",
+        "description": ""
+       }
+      ]
+     },
+     "docs": "Fetch a single pricing location by Grid Status entity ID."
+    }
+   ]
+  },
+  {
+   "info": {
+    "name": "Constraints",
+    "type": "folder"
+   },
+   "items": [
+    {
+     "info": {
+      "name": "List constraints.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/constraints"
+     },
+     "docs": "List transmission constraints."
+    },
+    {
+     "info": {
+      "name": "List contingencies.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/constraints/contingencies"
+     },
+     "docs": "List contingencies across constraints."
+    },
+    {
+     "info": {
+      "name": "List constraint binding rows.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/constraints/binding"
+     },
+     "docs": "List intervals where constraints were binding."
+    },
+    {
+     "info": {
+      "name": "List constraint binding counts by period.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/constraints/binding/counts"
+     },
+     "docs": "Counts of binding intervals per constraint, grouped by period."
+    },
+    {
+     "info": {
+      "name": "List constraint binding costs by period.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/constraints/binding/costs"
+     },
+     "docs": "Congestion costs attributed to binding constraints, grouped by period."
+    },
+    {
+     "info": {
+      "name": "Get constraint binding heat map.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/constraints/binding/heat_map"
+     },
+     "docs": "Heat map of constraint binding activity."
+    },
+    {
+     "info": {
+      "name": "Get constraint.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/constraints/:gs_entity_id",
+      "params": [
+       {
+        "name": "gs_entity_id",
+        "value": "",
+        "type": "path",
+        "description": ""
+       }
+      ]
+     },
+     "docs": "Fetch a single constraint by Grid Status entity ID."
+    },
+    {
+     "info": {
+      "name": "List shift factors for a constraint.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/constraints/:constraint_id/shift-factors",
+      "params": [
+       {
+        "name": "constraint_id",
+        "value": "",
+        "type": "path",
+        "description": ""
+       }
+      ]
+     },
+     "docs": "Shift factors for a constraint across pricing locations."
+    },
+    {
+     "info": {
+      "name": "List constraint stats by interval.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/constraints/:constraint_id/stats",
+      "params": [
+       {
+        "name": "constraint_id",
+        "value": "",
+        "type": "path",
+        "description": ""
+       }
+      ]
+     },
+     "docs": "Statistics for a constraint by interval."
+    },
+    {
+     "info": {
+      "name": "List shift factors for a location.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/constraints/locations/:location_gs_entity_id/shift-factors",
+      "params": [
+       {
+        "name": "location_gs_entity_id",
+        "value": "",
+        "type": "path",
+        "description": ""
+       }
+      ]
+     },
+     "docs": "Shift factors at a pricing location across constraints."
+    }
+   ]
+  },
+  {
+   "info": {
+    "name": "Reports and Block Pricing",
+    "type": "folder"
+   },
+   "items": [
+    {
+     "info": {
+      "name": "Get block pricing.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/block-pricing/:iso",
+      "params": [
+       {
+        "name": "iso",
+        "value": "",
+        "type": "path",
+        "description": ""
+       }
+      ]
+     },
+     "docs": "Volume-weighted block-averaged prices for an ISO over a date range, with month-to-date summaries."
+    },
+    {
+     "info": {
+      "name": "Get daily peak report.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/reports/daily_peak/:iso",
+      "params": [
+       {
+        "name": "iso",
+        "value": "",
+        "type": "path",
+        "description": ""
+       },
+       {
+        "name": "date",
+        "value": "",
+        "type": "query",
+        "description": "The report date (ISO 8601 date)."
+       }
+      ]
+     },
+     "docs": "Daily peak report of day-ahead market LMP peaks per zone. Requires a paid Grid Status plan."
+    }
+   ]
+  },
+  {
+   "info": {
+    "name": "CSV Exports and Usage",
+    "type": "folder"
+   },
+   "items": [
+    {
+     "info": {
+      "name": "List available bulk export files.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/csv-exports/:dataset_id",
+      "params": [
+       {
+        "name": "dataset_id",
+        "value": "",
+        "type": "path",
+        "description": ""
+       }
+      ]
+     },
+     "docs": "List per-day bulk CSV export files available on S3 for a dataset."
+    },
+    {
+     "info": {
+      "name": "Get presigned export URL.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/csv-exports/:dataset_id/:export_date",
+      "params": [
+       {
+        "name": "dataset_id",
+        "value": "",
+        "type": "path",
+        "description": ""
+       },
+       {
+        "name": "export_date",
+        "value": "",
+        "type": "path",
+        "description": ""
+       }
+      ]
+     },
+     "docs": "Generate a presigned S3 URL for a specific per-day export file."
+    },
+    {
+     "info": {
+      "name": "Get API usage.",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://api.gridstatus.io/v1/api_usage"
+     },
+     "docs": "Usage statistics and plan limits for the current user or organization."
+    }
+   ]
+  }
+ ]
+}

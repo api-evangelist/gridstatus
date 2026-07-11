@@ -1,0 +1,673 @@
+{
+ "info": {
+  "name": "Grid Status API",
+  "description": "Programmatic access to Grid Status electricity grid and power market data - day-ahead and real-time LMP prices, load, fuel mix, ancillary services, and transmission constraints across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP. Base URL: https://api.gridstatus.io/v1. Authenticate with an API key from https://www.gridstatus.io/settings/api in the x-api-key header.",
+  "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+ },
+ "auth": {
+  "type": "apikey",
+  "apikey": [
+   {
+    "key": "key",
+    "value": "x-api-key",
+    "type": "string"
+   },
+   {
+    "key": "value",
+    "value": "{{apiKey}}",
+    "type": "string"
+   },
+   {
+    "key": "in",
+    "value": "header",
+    "type": "string"
+   }
+  ]
+ },
+ "variable": [
+  {
+   "key": "baseUrl",
+   "value": "https://api.gridstatus.io/v1"
+  },
+  {
+   "key": "apiKey",
+   "value": ""
+  }
+ ],
+ "item": [
+  {
+   "name": "API Info",
+   "item": [
+    {
+     "name": "Get API info",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": []
+      },
+      "description": "Returns the API name and version."
+     }
+    }
+   ]
+  },
+  {
+   "name": "Datasets",
+   "item": [
+    {
+     "name": "List datasets",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/datasets",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "datasets"
+       ]
+      },
+      "description": "List all published datasets you have access to."
+     }
+    },
+    {
+     "name": "Get dataset metadata",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/datasets/:dataset_id",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "datasets",
+        ":dataset_id"
+       ],
+       "variable": [
+        {
+         "key": "dataset_id",
+         "value": ""
+        }
+       ]
+      },
+      "description": "Fetch metadata for a single dataset - columns, time range, frequency, source."
+     }
+    },
+    {
+     "name": "Get dataset audit",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/datasets/:dataset_id/audit",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "datasets",
+        ":dataset_id",
+        "audit"
+       ],
+       "variable": [
+        {
+         "key": "dataset_id",
+         "value": ""
+        }
+       ]
+      },
+      "description": "Ingest audit history for a dataset."
+     }
+    },
+    {
+     "name": "Get dataset updates",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/dataset-updates/:dataset_id",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "dataset-updates",
+        ":dataset_id"
+       ],
+       "variable": [
+        {
+         "key": "dataset_id",
+         "value": ""
+        }
+       ]
+      },
+      "description": "Recent row insert/update activity for a dataset, including backfills."
+     }
+    }
+   ]
+  },
+  {
+   "name": "Query Data",
+   "item": [
+    {
+     "name": "Query a dataset",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/datasets/:dataset_id/query?start_time=&end_time=&limit=&resample_frequency=&return_format=",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "datasets",
+        ":dataset_id",
+        "query"
+       ],
+       "variable": [
+        {
+         "key": "dataset_id",
+         "value": ""
+        }
+       ],
+       "query": [
+        {
+         "key": "start_time",
+         "value": "",
+         "description": "Start of the time range (ISO 8601)."
+        },
+        {
+         "key": "end_time",
+         "value": "",
+         "description": "End of the time range (ISO 8601)."
+        },
+        {
+         "key": "limit",
+         "value": "",
+         "description": "Maximum rows to return across all pages."
+        },
+        {
+         "key": "resample_frequency",
+         "value": "",
+         "description": "Resample frequency, e.g. 1 hour or 1 day."
+        },
+        {
+         "key": "return_format",
+         "value": "",
+         "description": "json or csv."
+        }
+       ]
+      },
+      "description": "Query dataset rows (e.g. ercot_spp_day_ahead_hourly day-ahead prices) with time filters, resampling, pagination, and JSON or CSV output."
+     }
+    },
+    {
+     "name": "Query a dataset by column value",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/datasets/:dataset_id/query/:filter_column_id/:filter_value_path",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "datasets",
+        ":dataset_id",
+        "query",
+        ":filter_column_id",
+        ":filter_value_path"
+       ],
+       "variable": [
+        {
+         "key": "dataset_id",
+         "value": ""
+        },
+        {
+         "key": "filter_column_id",
+         "value": ""
+        },
+        {
+         "key": "filter_value_path",
+         "value": ""
+        }
+       ]
+      },
+      "description": "Shortcut query filtered by a single column value, such as a settlement point or location."
+     }
+    }
+   ]
+  },
+  {
+   "name": "Pricing Locations",
+   "item": [
+    {
+     "name": "List pricing locations",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/pricing_locations",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "pricing_locations"
+       ]
+      },
+      "description": "List pricing locations (nodes, hubs, and zones) behind LMP datasets."
+     }
+    },
+    {
+     "name": "List nearby pricing locations",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/pricing_locations/nearby?latitude=&longitude=",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "pricing_locations",
+        "nearby"
+       ],
+       "query": [
+        {
+         "key": "latitude",
+         "value": "",
+         "description": "Latitude of the point of interest."
+        },
+        {
+         "key": "longitude",
+         "value": "",
+         "description": "Longitude of the point of interest."
+        }
+       ]
+      },
+      "description": "Find pricing locations near a latitude/longitude point."
+     }
+    },
+    {
+     "name": "Get pricing location",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/pricing_locations/:gs_entity_id",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "pricing_locations",
+        ":gs_entity_id"
+       ],
+       "variable": [
+        {
+         "key": "gs_entity_id",
+         "value": ""
+        }
+       ]
+      },
+      "description": "Fetch a single pricing location by Grid Status entity ID."
+     }
+    }
+   ]
+  },
+  {
+   "name": "Constraints",
+   "item": [
+    {
+     "name": "List constraints",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/constraints",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "constraints"
+       ]
+      },
+      "description": "List transmission constraints."
+     }
+    },
+    {
+     "name": "List contingencies",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/constraints/contingencies",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "constraints",
+        "contingencies"
+       ]
+      },
+      "description": "List contingencies across constraints."
+     }
+    },
+    {
+     "name": "List constraint binding rows",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/constraints/binding",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "constraints",
+        "binding"
+       ]
+      },
+      "description": "List intervals where constraints were binding."
+     }
+    },
+    {
+     "name": "List constraint binding counts by period",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/constraints/binding/counts",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "constraints",
+        "binding",
+        "counts"
+       ]
+      },
+      "description": "Counts of binding intervals per constraint, grouped by period."
+     }
+    },
+    {
+     "name": "List constraint binding costs by period",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/constraints/binding/costs",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "constraints",
+        "binding",
+        "costs"
+       ]
+      },
+      "description": "Congestion costs attributed to binding constraints, grouped by period."
+     }
+    },
+    {
+     "name": "Get constraint binding heat map",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/constraints/binding/heat_map",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "constraints",
+        "binding",
+        "heat_map"
+       ]
+      },
+      "description": "Heat map of constraint binding activity."
+     }
+    },
+    {
+     "name": "Get constraint",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/constraints/:gs_entity_id",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "constraints",
+        ":gs_entity_id"
+       ],
+       "variable": [
+        {
+         "key": "gs_entity_id",
+         "value": ""
+        }
+       ]
+      },
+      "description": "Fetch a single constraint by Grid Status entity ID."
+     }
+    },
+    {
+     "name": "List shift factors for a constraint",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/constraints/:constraint_id/shift-factors",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "constraints",
+        ":constraint_id",
+        "shift-factors"
+       ],
+       "variable": [
+        {
+         "key": "constraint_id",
+         "value": ""
+        }
+       ]
+      },
+      "description": "Shift factors for a constraint across pricing locations."
+     }
+    },
+    {
+     "name": "List constraint stats by interval",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/constraints/:constraint_id/stats",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "constraints",
+        ":constraint_id",
+        "stats"
+       ],
+       "variable": [
+        {
+         "key": "constraint_id",
+         "value": ""
+        }
+       ]
+      },
+      "description": "Statistics for a constraint by interval."
+     }
+    },
+    {
+     "name": "List shift factors for a location",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/constraints/locations/:location_gs_entity_id/shift-factors",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "constraints",
+        "locations",
+        ":location_gs_entity_id",
+        "shift-factors"
+       ],
+       "variable": [
+        {
+         "key": "location_gs_entity_id",
+         "value": ""
+        }
+       ]
+      },
+      "description": "Shift factors at a pricing location across constraints."
+     }
+    }
+   ]
+  },
+  {
+   "name": "Reports and Block Pricing",
+   "item": [
+    {
+     "name": "Get block pricing",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/block-pricing/:iso",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "block-pricing",
+        ":iso"
+       ],
+       "variable": [
+        {
+         "key": "iso",
+         "value": ""
+        }
+       ]
+      },
+      "description": "Volume-weighted block-averaged prices for an ISO over a date range, with month-to-date summaries."
+     }
+    },
+    {
+     "name": "Get daily peak report",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/reports/daily_peak/:iso?date=",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "reports",
+        "daily_peak",
+        ":iso"
+       ],
+       "variable": [
+        {
+         "key": "iso",
+         "value": ""
+        }
+       ],
+       "query": [
+        {
+         "key": "date",
+         "value": "",
+         "description": "The report date (ISO 8601 date)."
+        }
+       ]
+      },
+      "description": "Daily peak report of day-ahead market LMP peaks per zone. Requires a paid Grid Status plan."
+     }
+    }
+   ]
+  },
+  {
+   "name": "CSV Exports and Usage",
+   "item": [
+    {
+     "name": "List available bulk export files",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/csv-exports/:dataset_id",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "csv-exports",
+        ":dataset_id"
+       ],
+       "variable": [
+        {
+         "key": "dataset_id",
+         "value": ""
+        }
+       ]
+      },
+      "description": "List per-day bulk CSV export files available on S3 for a dataset."
+     }
+    },
+    {
+     "name": "Get presigned export URL",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/csv-exports/:dataset_id/:export_date",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "csv-exports",
+        ":dataset_id",
+        ":export_date"
+       ],
+       "variable": [
+        {
+         "key": "dataset_id",
+         "value": ""
+        },
+        {
+         "key": "export_date",
+         "value": ""
+        }
+       ]
+      },
+      "description": "Generate a presigned S3 URL for a specific per-day export file."
+     }
+    },
+    {
+     "name": "Get API usage",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+       "raw": "{{baseUrl}}/api_usage",
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "path": [
+        "api_usage"
+       ]
+      },
+      "description": "Usage statistics and plan limits for the current user or organization."
+     }
+    }
+   ]
+  }
+ ]
+}

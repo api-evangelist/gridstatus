@@ -1,0 +1,167 @@
+aid: gridstatus
+url: https://raw.githubusercontent.com/api-evangelist/gridstatus/refs/heads/main/apis.yml
+name: Grid Status
+kind: company
+description: Grid Status is a United States electricity grid and power market data
+  platform. The hosted Grid Status API (api.gridstatus.io) exposes hundreds of
+  curated datasets - day-ahead and real-time LMP and settlement point prices, load
+  and load forecasts, fuel mix, ancillary services, storage, and transmission
+  constraints - across CAISO, ERCOT, PJM, MISO, NYISO, SPP, ISONE, and IESO through
+  a uniform dataset query model authenticated with an API key. Grid Status also
+  maintains the open-source gridstatus Python library (BSD-3-Clause) for pulling
+  raw data directly from ISO/RTO sources, and the gridstatusio client for the
+  hosted API.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Day-Ahead Prices
+- Electricity
+- Grid Data
+- Energy Markets
+- LMP
+- Load
+- Fuel Mix
+- Open Source
+created: '2026-07-11'
+modified: '2026-07-11'
+specificationVersion: '0.19'
+apis:
+- aid: gridstatus:gridstatus-datasets-api
+  name: Grid Status Datasets API
+  tags:
+  - Datasets
+  - Metadata
+  - Catalog
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  baseURL: https://api.gridstatus.io/v1
+  properties:
+  - url: https://docs.gridstatus.io/developers/getting-started
+    type: Documentation
+  - url: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+    type: APIReference
+  - url: openapi/gridstatus-openapi.yml
+    type: OpenAPI
+  description: Browse the Grid Status data catalog programmatically - list every
+    published dataset you have access to, and fetch per-dataset metadata including
+    description, earliest and latest available time, columns, primary keys, source
+    URL, data frequency, and publication frequency. Audit and updates endpoints
+    report ingest history and row-level insert/update counts per dataset.
+- aid: gridstatus:gridstatus-dataset-query-api
+  name: Grid Status Dataset Query API
+  tags:
+  - Day-Ahead Prices
+  - LMP
+  - Load
+  - Fuel Mix
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.gridstatus.io/developers/api-reference/query-data
+  baseURL: https://api.gridstatus.io/v1
+  properties:
+  - url: https://docs.gridstatus.io/developers/concepts/query-parameters
+    type: Documentation
+  - url: https://docs.gridstatus.io/developers/api-reference/query-data
+    type: APIReference
+  - url: openapi/gridstatus-openapi.yml
+    type: OpenAPI
+  description: The workhorse of the platform - query any dataset by ID (for example
+    ercot_spp_day_ahead_hourly, ercot_fuel_mix, caiso_load, caiso_lmp_real_time_5_min,
+    pjm_lmp_real_time_5_min, ercot_as_prices) with time-range and column filters,
+    ordering, resampling to frequencies from 1 minute to 1 year, pagination with
+    cursors, and JSON or CSV output. Covers day-ahead and real-time prices, kWh/MWh
+    rates, load, fuel mix, storage, and balancing data across all supported ISOs.
+- aid: gridstatus:gridstatus-pricing-locations-api
+  name: Grid Status Pricing Locations API
+  tags:
+  - Pricing Locations
+  - Nodes
+  - Hubs
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.gridstatus.io/developers/api-reference/pricing-locations
+  baseURL: https://api.gridstatus.io/v1
+  properties:
+  - url: https://docs.gridstatus.io/developers/api-reference/pricing-locations
+    type: APIReference
+  - url: openapi/gridstatus-openapi.yml
+    type: OpenAPI
+  description: Look up the pricing locations (nodes, hubs, and zones) behind LMP
+    datasets - list locations, fetch a single location by Grid Status entity ID,
+    and find pricing locations near a latitude/longitude point to map physical
+    assets to the correct settlement location.
+- aid: gridstatus:gridstatus-constraints-api
+  name: Grid Status Constraints API
+  tags:
+  - Constraints
+  - Congestion
+  - Shift Factors
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.gridstatus.io/developers/api-reference/constraints
+  baseURL: https://api.gridstatus.io/v1
+  properties:
+  - url: https://docs.gridstatus.io/developers/api-reference/constraints
+    type: APIReference
+  - url: openapi/gridstatus-openapi.yml
+    type: OpenAPI
+  description: Transmission constraint analytics - list constraints and
+    contingencies, fetch binding intervals, binding counts and costs by period,
+    constraint stats, heat maps, and shift factors both per constraint and per
+    pricing location, for congestion analysis and constraint impact studies.
+- aid: gridstatus:gridstatus-reports-block-pricing-api
+  name: Grid Status Reports and Block Pricing API
+  tags:
+  - Block Pricing
+  - Reports
+  - Day-Ahead Prices
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.gridstatus.io/developers/api-reference/block-pricing-data
+  baseURL: https://api.gridstatus.io/v1
+  properties:
+  - url: https://docs.gridstatus.io/developers/api-reference/block-pricing-data
+    type: Documentation
+  - url: https://docs.gridstatus.io/developers/api-reference/reports
+    type: APIReference
+  - url: openapi/gridstatus-openapi.yml
+    type: OpenAPI
+  description: Pre-computed market summaries - volume-weighted block-averaged
+    prices (daily plus month-to-date summaries) for an ISO over a date range, and
+    daily peak reports of day-ahead market LMP peaks per zone (daily peak reports
+    require a paid Grid Status plan).
+- aid: gridstatus:gridstatus-bulk-exports-usage-api
+  name: Grid Status Bulk Exports and Usage API
+  tags:
+  - CSV Exports
+  - Bulk Data
+  - API Usage
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started
+  baseURL: https://api.gridstatus.io/v1
+  properties:
+  - url: https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started
+    type: Documentation
+  - url: https://docs.gridstatus.io/developers/api-reference/api-usage
+    type: APIReference
+  - url: openapi/gridstatus-openapi.yml
+    type: OpenAPI
+  description: Operational surface for heavy consumers - list per-day bulk CSV
+    export files for a dataset and generate presigned S3 URLs to download them,
+    and check your API usage (rows returned, requests, and per-second/minute/hour
+    rate limits) against your plan for the current billing period.
+common:
+- type: GitHubOrganization
+  url: https://github.com/gridstatus
+- type: LinkedIn
+  url: https://www.linkedin.com/company/grid-status
+- type: Website
+  url: https://www.gridstatus.io
+- type: Documentation
+  url: https://docs.gridstatus.io
+- type: Plans
+  url: plans/gridstatus-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/gridstatus-rate-limits.yml
+- type: FinOps
+  url: finops/gridstatus-finops.yml
+- type: Blog
+  url: https://blog.gridstatus.io/rss/
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

@@ -1,0 +1,86 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Grid Status
+providerId: gridstatus
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Day-Ahead Prices
+- Electricity
+- Grid Data
+- Energy Markets
+- Rate Limiting
+- Quotas
+description: >-
+  The hosted Grid Status API is metered primarily on rows returned per month
+  rather than on raw request counts alone. The live API's usage model (surfaced
+  by the GET /api_usage endpoint) defines six per-plan limits - total rows
+  returned, total requests, rows per response, and per-second, per-minute, and
+  per-hour request rate limits. The free plan is documented at 500,000 rows
+  returned per month in the gridstatusio client README; paid plans raise the
+  allowances. Numeric per-plan rate limit values are not published on a public
+  docs page and are visible to each account via /api_usage, so they are not
+  reconciled here.
+notes: >-
+  Row consumption adds up very quickly against real-time price datasets - Grid
+  Status recommends passing a limit parameter on every query. The official
+  gridstatusio Python client automatically retries rate-limited requests with
+  configurable exponential backoff. Bulk CSV exports (presigned S3 downloads)
+  are the recommended path for large historical pulls instead of paging through
+  the query endpoint.
+sources:
+- https://docs.gridstatus.io/developers/api-reference/api-usage
+- https://api.gridstatus.io/openapi.json
+- https://github.com/gridstatus/gridstatusio
+responseCodes:
+  throttled: 429
+limits:
+- name: Rows Returned per Month (Free)
+  scope: account
+  metric: rows
+  limit: '500000'
+  notes: Free plan allowance documented in the gridstatusio client README; the primary metered unit.
+- name: Rows Returned per Month (Paid)
+  scope: account
+  metric: rows
+  limit: per plan
+  notes: Reported per account as api_rows_returned_limit by GET /api_usage.
+- name: API Requests
+  scope: account
+  metric: requests
+  limit: per plan
+  notes: Reported per account as api_requests_limit by GET /api_usage.
+- name: Rows per Response
+  scope: request
+  metric: rows
+  limit: per plan
+  notes: Maximum rows in a single response (api_rows_per_response_limit); page through larger results with page_size and cursor.
+- name: Requests per Second
+  scope: account
+  metric: requests
+  limit: per plan
+  notes: Reported as per_second_api_rate_limit by GET /api_usage.
+- name: Requests per Minute
+  scope: account
+  metric: requests
+  limit: per plan
+  notes: Reported as per_minute_api_rate_limit by GET /api_usage.
+- name: Requests per Hour
+  scope: account
+  metric: requests
+  limit: per plan
+  notes: Reported as per_hour_api_rate_limit by GET /api_usage.
+policies:
+- name: Row-Based Metering
+  description: Usage is metered on rows returned, so always pass a limit parameter and select only needed columns to conserve your monthly allowance.
+- name: Backoff Strategy
+  description: The official gridstatusio client retries rate-limited requests with configurable exponential backoff; custom clients should do the same and honor 429 responses.
+- name: Bulk Export Path
+  description: For large historical pulls, use the per-day bulk CSV export files (presigned S3 URLs) instead of paging the query endpoint.
+- name: Usage Visibility
+  description: GET /api_usage returns your plan name, all six limits, and current billing period consumption for programmatic budget checks.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
