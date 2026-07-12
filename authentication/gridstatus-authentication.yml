@@ -1,0 +1,24 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/gridstatus-openapi.yml
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+  - query
+schemes:
+- name: apiKeyHeader
+  type: apiKey
+  in: header
+  parameter: x-api-key
+  description: API key from https://www.gridstatus.io/settings/api.
+  sources:
+  - openapi/gridstatus-openapi.yml
+- name: apiKeyQuery
+  type: apiKey
+  in: query
+  parameter: api_key
+  description: API key passed as a query parameter (alternative to the header).
+  sources:
+  - openapi/gridstatus-openapi.yml
