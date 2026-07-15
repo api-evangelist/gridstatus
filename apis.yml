@@ -146,6 +146,8 @@ apis:
     and check your API usage (rows returned, requests, and per-second/minute/hour
     rate limits) against your plan for the current billing period.
 common:
+- type: AgenticAccess
+  url: agentic-access/gridstatus-agentic-access.yml
 - type: DomainSecurity
   url: security/gridstatus-domain-security.yml
 - type: Authentication
