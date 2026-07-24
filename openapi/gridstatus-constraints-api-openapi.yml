@@ -1,0 +1,228 @@
+openapi: 3.0.3
+info:
+  title: Grid Status API Info Constraints API
+  description: The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP. Data is organized as datasets - day-ahead and real-time LMP and settlement point prices, load and load forecasts, fuel mix, ancillary services, storage, and transmission constraints - that are listed, described, and queried through a uniform interface with time-range filters, column filters, resampling, pagination, and JSON or CSV output. Authenticate with an API key from the Grid Status settings page, passed in the x-api-key header (or api_key query parameter). Grounded in the live OpenAPI 3.1 document published at https://api.gridstatus.io/openapi.json (version 1.3.0).
+  version: 1.3.0
+  contact:
+    name: Grid Status
+    url: https://www.gridstatus.io
+    email: contact@gridstatus.io
+servers:
+- url: https://api.gridstatus.io/v1
+  description: Grid Status hosted API
+security:
+- apiKeyHeader: []
+- apiKeyQuery: []
+tags:
+- name: Constraints
+  description: Transmission constraints, binding activity, and shift factors.
+paths:
+  /constraints:
+    get:
+      operationId: listConstraints
+      tags:
+      - Constraints
+      summary: List constraints
+      description: List transmission constraints.
+      responses:
+        '200':
+          description: A list of constraints.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/contingencies:
+    get:
+      operationId: listContingencies
+      tags:
+      - Constraints
+      summary: List contingencies
+      description: List contingencies across constraints.
+      responses:
+        '200':
+          description: A list of contingencies.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/binding:
+    get:
+      operationId: listConstraintBindingRows
+      tags:
+      - Constraints
+      summary: List constraint binding rows
+      description: List rows for intervals where constraints were binding.
+      responses:
+        '200':
+          description: Constraint binding rows.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/binding/counts:
+    get:
+      operationId: listConstraintBindingCounts
+      tags:
+      - Constraints
+      summary: List constraint binding counts by period
+      description: Counts of binding intervals per constraint, grouped by period.
+      responses:
+        '200':
+          description: Binding counts by period.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/binding/costs:
+    get:
+      operationId: listConstraintBindingCosts
+      tags:
+      - Constraints
+      summary: List constraint binding costs by period
+      description: Congestion costs attributed to binding constraints, grouped by period.
+      responses:
+        '200':
+          description: Binding costs by period.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/binding/heat_map:
+    get:
+      operationId: getConstraintBindingHeatMap
+      tags:
+      - Constraints
+      summary: Get constraint binding heat map
+      description: Heat map of constraint binding activity.
+      responses:
+        '200':
+          description: Constraint binding heat map cells.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/{gs_entity_id}:
+    get:
+      operationId: getConstraint
+      tags:
+      - Constraints
+      summary: Get constraint
+      description: Fetch a single constraint by Grid Status entity ID.
+      parameters:
+      - name: gs_entity_id
+        in: path
+        required: true
+        description: Grid Status entity ID of the constraint.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The constraint.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/{constraint_id}/shift-factors:
+    get:
+      operationId: listShiftFactors
+      tags:
+      - Constraints
+      summary: List shift factors for a constraint
+      description: Shift factors for a constraint across pricing locations.
+      parameters:
+      - $ref: '#/components/parameters/ConstraintId'
+      responses:
+        '200':
+          description: Shift factors for the constraint.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/{constraint_id}/stats:
+    get:
+      operationId: listConstraintStats
+      tags:
+      - Constraints
+      summary: List constraint stats by interval
+      description: Statistics for a constraint by interval.
+      parameters:
+      - $ref: '#/components/parameters/ConstraintId'
+      responses:
+        '200':
+          description: Constraint statistics by interval.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/locations/{location_gs_entity_id}/shift-factors:
+    get:
+      operationId: listShiftFactorsForLocation
+      tags:
+      - Constraints
+      summary: List shift factors for a location
+      description: Shift factors at a pricing location across constraints.
+      parameters:
+      - name: location_gs_entity_id
+        in: path
+        required: true
+        description: Grid Status entity ID of the pricing location.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Shift factors for the location.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: Missing API Key.
+  parameters:
+    ConstraintId:
+      name: constraint_id
+      in: path
+      required: true
+      description: ID of the constraint.
+      schema:
+        type: string
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key from https://www.gridstatus.io/settings/api.
+    apiKeyQuery:
+      type: apiKey
+      in: query
+      name: api_key
+      description: API key passed as a query parameter (alternative to the header).

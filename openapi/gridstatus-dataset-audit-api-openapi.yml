@@ -1,0 +1,76 @@
+openapi: 3.0.3
+info:
+  title: Grid Status API Info Dataset Audit API
+  description: The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP. Data is organized as datasets - day-ahead and real-time LMP and settlement point prices, load and load forecasts, fuel mix, ancillary services, storage, and transmission constraints - that are listed, described, and queried through a uniform interface with time-range filters, column filters, resampling, pagination, and JSON or CSV output. Authenticate with an API key from the Grid Status settings page, passed in the x-api-key header (or api_key query parameter). Grounded in the live OpenAPI 3.1 document published at https://api.gridstatus.io/openapi.json (version 1.3.0).
+  version: 1.3.0
+  contact:
+    name: Grid Status
+    url: https://www.gridstatus.io
+    email: contact@gridstatus.io
+servers:
+- url: https://api.gridstatus.io/v1
+  description: Grid Status hosted API
+security:
+- apiKeyHeader: []
+- apiKeyQuery: []
+tags:
+- name: Dataset Audit
+  description: Ingest audit history for a dataset.
+paths:
+  /datasets/{dataset_id}/audit:
+    get:
+      operationId: getDatasetAudit
+      tags:
+      - Dataset Audit
+      summary: Get dataset audit
+      description: Ingest audit history for a dataset.
+      parameters:
+      - $ref: '#/components/parameters/DatasetId'
+      responses:
+        '200':
+          description: Audit records for the dataset.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetAuditResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  parameters:
+    DatasetId:
+      name: dataset_id
+      in: path
+      required: true
+      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
+      schema:
+        type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: Missing API Key.
+  schemas:
+    DatasetAuditResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key from https://www.gridstatus.io/settings/api.
+    apiKeyQuery:
+      type: apiKey
+      in: query
+      name: api_key
+      description: API key passed as a query parameter (alternative to the header).

@@ -1,0 +1,92 @@
+openapi: 3.0.3
+info:
+  title: Grid Status API Info Dataset Updates API
+  description: The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP. Data is organized as datasets - day-ahead and real-time LMP and settlement point prices, load and load forecasts, fuel mix, ancillary services, storage, and transmission constraints - that are listed, described, and queried through a uniform interface with time-range filters, column filters, resampling, pagination, and JSON or CSV output. Authenticate with an API key from the Grid Status settings page, passed in the x-api-key header (or api_key query parameter). Grounded in the live OpenAPI 3.1 document published at https://api.gridstatus.io/openapi.json (version 1.3.0).
+  version: 1.3.0
+  contact:
+    name: Grid Status
+    url: https://www.gridstatus.io
+    email: contact@gridstatus.io
+servers:
+- url: https://api.gridstatus.io/v1
+  description: Grid Status hosted API
+security:
+- apiKeyHeader: []
+- apiKeyQuery: []
+tags:
+- name: Dataset Updates
+  description: Recent row insert/update activity for a dataset.
+paths:
+  /dataset-updates/{dataset_id}:
+    get:
+      operationId: getDatasetUpdates
+      tags:
+      - Dataset Updates
+      summary: Get dataset updates
+      description: Recent update activity for a dataset - each entry reports the update time, number of rows inserted and updated, and whether the run was a backfill. Useful for polling freshness without re-querying data.
+      parameters:
+      - $ref: '#/components/parameters/DatasetId'
+      responses:
+        '200':
+          description: Recent dataset update records.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetUpdatesResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: Missing API Key.
+  schemas:
+    DatasetUpdateResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        dataset:
+          type: string
+        time_utc:
+          type: string
+          format: date-time
+        num_rows_updated:
+          type: integer
+        num_rows_inserted:
+          type: integer
+        is_backfill:
+          type: boolean
+    DatasetUpdatesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatasetUpdateResponse'
+  parameters:
+    DatasetId:
+      name: dataset_id
+      in: path
+      required: true
+      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
+      schema:
+        type: string
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key from https://www.gridstatus.io/settings/api.
+    apiKeyQuery:
+      type: apiKey
+      in: query
+      name: api_key
+      description: API key passed as a query parameter (alternative to the header).

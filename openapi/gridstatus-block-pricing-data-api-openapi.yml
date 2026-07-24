@@ -1,0 +1,77 @@
+openapi: 3.0.3
+info:
+  title: Grid Status API Info Block Pricing Data API
+  description: The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP. Data is organized as datasets - day-ahead and real-time LMP and settlement point prices, load and load forecasts, fuel mix, ancillary services, storage, and transmission constraints - that are listed, described, and queried through a uniform interface with time-range filters, column filters, resampling, pagination, and JSON or CSV output. Authenticate with an API key from the Grid Status settings page, passed in the x-api-key header (or api_key query parameter). Grounded in the live OpenAPI 3.1 document published at https://api.gridstatus.io/openapi.json (version 1.3.0).
+  version: 1.3.0
+  contact:
+    name: Grid Status
+    url: https://www.gridstatus.io
+    email: contact@gridstatus.io
+servers:
+- url: https://api.gridstatus.io/v1
+  description: Grid Status hosted API
+security:
+- apiKeyHeader: []
+- apiKeyQuery: []
+tags:
+- name: Block Pricing Data
+  description: Block-averaged prices for an ISO.
+paths:
+  /block-pricing/{iso}:
+    get:
+      operationId: getBlockPricing
+      tags:
+      - Block Pricing Data
+      summary: Get block pricing
+      description: Returns volume-weighted block-averaged prices for an ISO over the requested date range. The response is a list of columns - daily columns keyed by ISO date plus appended summary columns such as MTD (month-to-date) and a Month-Year label for each full month spanned.
+      parameters:
+      - $ref: '#/components/parameters/Iso'
+      responses:
+        '200':
+          description: Block-averaged prices for the ISO.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  parameters:
+    Iso:
+      name: iso
+      in: path
+      required: true
+      description: ISO/RTO identifier.
+      schema:
+        type: string
+        enum:
+        - CAISO
+        - ERCOT
+        - IESO
+        - ISONE
+        - MISO
+        - NYISO
+        - PJM
+        - SPP
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: Missing API Key.
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key from https://www.gridstatus.io/settings/api.
+    apiKeyQuery:
+      type: apiKey
+      in: query
+      name: api_key
+      description: API key passed as a query parameter (alternative to the header).
