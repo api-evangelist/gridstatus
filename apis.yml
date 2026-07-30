@@ -11,7 +11,20 @@ description: Grid Status is a United States electricity grid and power market da
   maintains the open-source gridstatus Python library (BSD-3-Clause) for pulling
   raw data directly from ISO/RTO sources, and the gridstatusio client for the
   hosted API.
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+accessModel:
+  pricing: freemium
+  onboarding: self-serve
+  trial: false
+  try_now: true
+  public: false
+  label: Freemium · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/gridstatus.png
 tags:
 - Day-Ahead Prices
 - Electricity
@@ -25,126 +38,336 @@ created: '2026-07-11'
 modified: '2026-07-11'
 specificationVersion: '0.19'
 apis:
-- aid: gridstatus:gridstatus-datasets-api
-  name: Grid Status Datasets API
-  tags:
-  - Datasets
-  - Metadata
-  - Catalog
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+- aid: gridstatus:gridstatus-api-info-api
+  name: Grid Status API Info API
+  description: API name and version.
   humanURL: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
   baseURL: https://api.gridstatus.io/v1
-  properties:
-  - url: https://docs.gridstatus.io/developers/getting-started
-    type: Documentation
-  - url: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
-    type: APIReference
-  - url: openapi/gridstatus-openapi.yml
-    type: OpenAPI
-  description: Browse the Grid Status data catalog programmatically - list every
-    published dataset you have access to, and fetch per-dataset metadata including
-    description, earliest and latest available time, columns, primary keys, source
-    URL, data frequency, and publication frequency. Audit and updates endpoints
-    report ingest history and row-level insert/update counts per dataset.
-- aid: gridstatus:gridstatus-dataset-query-api
-  name: Grid Status Dataset Query API
   tags:
-  - Day-Ahead Prices
-  - LMP
-  - Load
-  - Fuel Mix
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://docs.gridstatus.io/developers/api-reference/query-data
-  baseURL: https://api.gridstatus.io/v1
+  - API Info
   properties:
-  - url: https://docs.gridstatus.io/developers/concepts/query-parameters
-    type: Documentation
-  - url: https://docs.gridstatus.io/developers/api-reference/query-data
-    type: APIReference
-  - url: openapi/gridstatus-openapi.yml
-    type: OpenAPI
-  description: The workhorse of the platform - query any dataset by ID (for example
-    ercot_spp_day_ahead_hourly, ercot_fuel_mix, caiso_load, caiso_lmp_real_time_5_min,
-    pjm_lmp_real_time_5_min, ercot_as_prices) with time-range and column filters,
-    ordering, resampling to frequencies from 1 minute to 1 year, pagination with
-    cursors, and JSON or CSV output. Covers day-ahead and real-time prices, kWh/MWh
-    rates, load, fuel mix, storage, and balancing data across all supported ISOs.
-- aid: gridstatus:gridstatus-pricing-locations-api
-  name: Grid Status Pricing Locations API
+  - type: OpenAPI
+    url: openapi/gridstatus-api-info-api-openapi.yml
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/concepts/query-parameters
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/query-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/pricing-locations
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/constraints
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/api-reference/block-pricing-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/reports
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/api-usage
+- aid: gridstatus:gridstatus-api-usage-api
+  name: Grid Status API Usage API
+  description: Usage and limits for the current user or organization.
+  humanURL: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  baseURL: https://api.gridstatus.io/v1
   tags:
-  - Pricing Locations
-  - Nodes
-  - Hubs
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://docs.gridstatus.io/developers/api-reference/pricing-locations
-  baseURL: https://api.gridstatus.io/v1
+  - API Usage
   properties:
-  - url: https://docs.gridstatus.io/developers/api-reference/pricing-locations
-    type: APIReference
-  - url: openapi/gridstatus-openapi.yml
-    type: OpenAPI
-  description: Look up the pricing locations (nodes, hubs, and zones) behind LMP
-    datasets - list locations, fetch a single location by Grid Status entity ID,
-    and find pricing locations near a latitude/longitude point to map physical
-    assets to the correct settlement location.
+  - type: OpenAPI
+    url: openapi/gridstatus-api-usage-api-openapi.yml
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/concepts/query-parameters
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/query-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/pricing-locations
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/constraints
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/api-reference/block-pricing-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/reports
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/api-usage
+- aid: gridstatus:gridstatus-block-pricing-data-api
+  name: Grid Status Block Pricing Data API
+  description: Block-averaged prices for an ISO.
+  humanURL: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  baseURL: https://api.gridstatus.io/v1
+  tags:
+  - Block Pricing Data
+  properties:
+  - type: OpenAPI
+    url: openapi/gridstatus-block-pricing-data-api-openapi.yml
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/concepts/query-parameters
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/query-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/pricing-locations
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/constraints
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/api-reference/block-pricing-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/reports
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/api-usage
 - aid: gridstatus:gridstatus-constraints-api
   name: Grid Status Constraints API
+  description: Transmission constraints, binding activity, and shift factors.
+  humanURL: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  baseURL: https://api.gridstatus.io/v1
   tags:
   - Constraints
-  - Congestion
-  - Shift Factors
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://docs.gridstatus.io/developers/api-reference/constraints
-  baseURL: https://api.gridstatus.io/v1
   properties:
-  - url: https://docs.gridstatus.io/developers/api-reference/constraints
-    type: APIReference
-  - url: openapi/gridstatus-openapi.yml
-    type: OpenAPI
-  description: Transmission constraint analytics - list constraints and
-    contingencies, fetch binding intervals, binding counts and costs by period,
-    constraint stats, heat maps, and shift factors both per constraint and per
-    pricing location, for congestion analysis and constraint impact studies.
-- aid: gridstatus:gridstatus-reports-block-pricing-api
-  name: Grid Status Reports and Block Pricing API
-  tags:
-  - Block Pricing
-  - Reports
-  - Day-Ahead Prices
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://docs.gridstatus.io/developers/api-reference/block-pricing-data
+  - type: OpenAPI
+    url: openapi/gridstatus-constraints-api-openapi.yml
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/concepts/query-parameters
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/query-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/pricing-locations
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/constraints
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/api-reference/block-pricing-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/reports
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/api-usage
+- aid: gridstatus:gridstatus-csv-exports-api
+  name: Grid Status CSV Exports API
+  description: Bulk per-day CSV export files on S3.
+  humanURL: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
   baseURL: https://api.gridstatus.io/v1
-  properties:
-  - url: https://docs.gridstatus.io/developers/api-reference/block-pricing-data
-    type: Documentation
-  - url: https://docs.gridstatus.io/developers/api-reference/reports
-    type: APIReference
-  - url: openapi/gridstatus-openapi.yml
-    type: OpenAPI
-  description: Pre-computed market summaries - volume-weighted block-averaged
-    prices (daily plus month-to-date summaries) for an ISO over a date range, and
-    daily peak reports of day-ahead market LMP peaks per zone (daily peak reports
-    require a paid Grid Status plan).
-- aid: gridstatus:gridstatus-bulk-exports-usage-api
-  name: Grid Status Bulk Exports and Usage API
   tags:
   - CSV Exports
-  - Bulk Data
-  - API Usage
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started
-  baseURL: https://api.gridstatus.io/v1
   properties:
-  - url: https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started
-    type: Documentation
-  - url: https://docs.gridstatus.io/developers/api-reference/api-usage
-    type: APIReference
-  - url: openapi/gridstatus-openapi.yml
-    type: OpenAPI
-  description: Operational surface for heavy consumers - list per-day bulk CSV
-    export files for a dataset and generate presigned S3 URLs to download them,
-    and check your API usage (rows returned, requests, and per-second/minute/hour
-    rate limits) against your plan for the current billing period.
+  - type: OpenAPI
+    url: openapi/gridstatus-csv-exports-api-openapi.yml
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/concepts/query-parameters
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/query-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/pricing-locations
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/constraints
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/api-reference/block-pricing-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/reports
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/api-usage
+- aid: gridstatus:gridstatus-dataset-audit-api
+  name: Grid Status Dataset Audit API
+  description: Ingest audit history for a dataset.
+  humanURL: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  baseURL: https://api.gridstatus.io/v1
+  tags:
+  - Dataset Audit
+  properties:
+  - type: OpenAPI
+    url: openapi/gridstatus-dataset-audit-api-openapi.yml
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/concepts/query-parameters
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/query-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/pricing-locations
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/constraints
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/api-reference/block-pricing-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/reports
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/api-usage
+- aid: gridstatus:gridstatus-dataset-metadata-api
+  name: Grid Status Dataset Metadata API
+  description: List datasets and fetch per-dataset metadata.
+  humanURL: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  baseURL: https://api.gridstatus.io/v1
+  tags:
+  - Dataset Metadata
+  properties:
+  - type: OpenAPI
+    url: openapi/gridstatus-dataset-metadata-api-openapi.yml
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/concepts/query-parameters
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/query-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/pricing-locations
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/constraints
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/api-reference/block-pricing-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/reports
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/api-usage
+- aid: gridstatus:gridstatus-dataset-updates-api
+  name: Grid Status Dataset Updates API
+  description: Recent row insert/update activity for a dataset.
+  humanURL: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  baseURL: https://api.gridstatus.io/v1
+  tags:
+  - Dataset Updates
+  properties:
+  - type: OpenAPI
+    url: openapi/gridstatus-dataset-updates-api-openapi.yml
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/concepts/query-parameters
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/query-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/pricing-locations
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/constraints
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/api-reference/block-pricing-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/reports
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/api-usage
+- aid: gridstatus:gridstatus-pricing-locations-api
+  name: Grid Status Pricing Locations API
+  description: Nodes, hubs, and zones behind LMP datasets.
+  humanURL: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  baseURL: https://api.gridstatus.io/v1
+  tags:
+  - Pricing Locations
+  properties:
+  - type: OpenAPI
+    url: openapi/gridstatus-pricing-locations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/concepts/query-parameters
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/query-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/pricing-locations
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/constraints
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/api-reference/block-pricing-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/reports
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/api-usage
+- aid: gridstatus:gridstatus-query-data-api
+  name: Grid Status Query Data API
+  description: Query dataset rows with filters, resampling, and pagination.
+  humanURL: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  baseURL: https://api.gridstatus.io/v1
+  tags:
+  - Query Data
+  properties:
+  - type: OpenAPI
+    url: openapi/gridstatus-query-data-api-openapi.yml
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/concepts/query-parameters
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/query-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/pricing-locations
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/constraints
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/api-reference/block-pricing-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/reports
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/api-usage
+- aid: gridstatus:gridstatus-reports-api
+  name: Grid Status Reports API
+  description: Daily peak reports (paid plans).
+  humanURL: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  baseURL: https://api.gridstatus.io/v1
+  tags:
+  - Reports
+  properties:
+  - type: OpenAPI
+    url: openapi/gridstatus-reports-api-openapi.yml
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/concepts/query-parameters
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/query-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/pricing-locations
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/constraints
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/api-reference/block-pricing-data
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/reports
+  - type: Documentation
+    url: https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started
+  - type: APIReference
+    url: https://docs.gridstatus.io/developers/api-reference/api-usage
 common:
 - type: AgenticAccess
   url: agentic-access/gridstatus-agentic-access.yml
