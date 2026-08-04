@@ -1,0 +1,34 @@
+{
+  "provider": "gridstatus",
+  "sources": [
+    "gridstatus-api-info-api-openapi.yml",
+    "gridstatus-api-usage-api-openapi.yml",
+    "gridstatus-block-pricing-data-api-openapi.yml",
+    "gridstatus-constraints-api-openapi.yml",
+    "gridstatus-csv-exports-api-openapi.yml",
+    "gridstatus-dataset-audit-api-openapi.yml",
+    "gridstatus-dataset-metadata-api-openapi.yml",
+    "gridstatus-dataset-updates-api-openapi.yml",
+    "gridstatus-pricing-locations-api-openapi.yml",
+    "gridstatus-query-data-api-openapi.yml",
+    "gridstatus-reports-api-openapi.yml"
+  ],
+  "outputs": [
+    "gridstatus-api-info-api-openapi.yml",
+    "gridstatus-api-usage-api-openapi.yml",
+    "gridstatus-block-pricing-data-api-openapi.yml",
+    "gridstatus-constraints-api-openapi.yml",
+    "gridstatus-csv-exports-api-openapi.yml",
+    "gridstatus-dataset-audit-api-openapi.yml",
+    "gridstatus-dataset-metadata-api-openapi.yml",
+    "gridstatus-dataset-updates-api-openapi.yml",
+    "gridstatus-pricing-locations-api-openapi.yml",
+    "gridstatus-query-data-api-openapi.yml",
+    "gridstatus-reports-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

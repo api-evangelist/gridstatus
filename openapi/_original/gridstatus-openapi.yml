@@ -1,0 +1,1026 @@
+openapi: 3.0.3
+info:
+  title: Grid Status API
+  description: >-
+    The Grid Status hosted API provides programmatic access to United States and
+    Canadian electricity grid and power market data across CAISO, ERCOT, IESO,
+    ISONE, MISO, NYISO, PJM, and SPP. Data is organized as datasets - day-ahead
+    and real-time LMP and settlement point prices, load and load forecasts, fuel
+    mix, ancillary services, storage, and transmission constraints - that are
+    listed, described, and queried through a uniform interface with time-range
+    filters, column filters, resampling, pagination, and JSON or CSV output.
+    Authenticate with an API key from the Grid Status settings page, passed in
+    the x-api-key header (or api_key query parameter). Grounded in the live
+    OpenAPI 3.1 document published at https://api.gridstatus.io/openapi.json
+    (version 1.3.0).
+  version: 1.3.0
+  contact:
+    name: Grid Status
+    url: https://www.gridstatus.io
+    email: contact@gridstatus.io
+servers:
+- url: https://api.gridstatus.io/v1
+  description: Grid Status hosted API
+security:
+- apiKeyHeader: []
+- apiKeyQuery: []
+tags:
+- name: API Info
+  description: API name and version.
+- name: Dataset Metadata
+  description: List datasets and fetch per-dataset metadata.
+- name: Query Data
+  description: Query dataset rows with filters, resampling, and pagination.
+- name: Dataset Audit
+  description: Ingest audit history for a dataset.
+- name: Dataset Updates
+  description: Recent row insert/update activity for a dataset.
+- name: Block Pricing Data
+  description: Block-averaged prices for an ISO.
+- name: Reports
+  description: Daily peak reports (paid plans).
+- name: Pricing Locations
+  description: Nodes, hubs, and zones behind LMP datasets.
+- name: Constraints
+  description: Transmission constraints, binding activity, and shift factors.
+- name: CSV Exports
+  description: Bulk per-day CSV export files on S3.
+- name: API Usage
+  description: Usage and limits for the current user or organization.
+paths:
+  /:
+    get:
+      operationId: apiInfo
+      tags:
+      - API Info
+      summary: API Info
+      description: Returns the API name and version.
+      security: []
+      responses:
+        '200':
+          description: API name and version.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIInfoResponse'
+  /datasets:
+    get:
+      operationId: listDatasets
+      tags:
+      - Dataset Metadata
+      summary: List datasets
+      description: >-
+        List all published datasets the authenticated user has access to. The
+        full catalog is browsable at https://www.gridstatus.io/datasets.
+      parameters:
+      - $ref: '#/components/parameters/ReturnFormat'
+      responses:
+        '200':
+          description: A list of datasets with metadata.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListDatasetsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /datasets/{dataset_id}:
+    get:
+      operationId: getDatasetMetadata
+      tags:
+      - Dataset Metadata
+      summary: Get dataset metadata
+      description: >-
+        Fetch metadata for a single dataset - description, earliest and latest
+        available time, columns, primary key columns, time index column, source
+        URL, approximate row count, data frequency, and publication frequency.
+      parameters:
+      - $ref: '#/components/parameters/DatasetId'
+      responses:
+        '200':
+          description: Dataset metadata.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /datasets/{dataset_id}/audit:
+    get:
+      operationId: getDatasetAudit
+      tags:
+      - Dataset Audit
+      summary: Get dataset audit
+      description: Ingest audit history for a dataset.
+      parameters:
+      - $ref: '#/components/parameters/DatasetId'
+      responses:
+        '200':
+          description: Audit records for the dataset.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetAuditResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /datasets/{dataset_id}/query:
+    get:
+      operationId: queryDataset
+      tags:
+      - Query Data
+      summary: Query a dataset
+      description: >-
+        Query a dataset and return matching rows as JSON or CSV. Example dataset
+        IDs include ercot_spp_day_ahead_hourly (ERCOT day-ahead settlement point
+        prices), ercot_fuel_mix, ercot_as_prices, caiso_load,
+        caiso_lmp_real_time_5_min, and pjm_lmp_real_time_5_min. Pass the
+        X-Stream true request header to stream JSON rows from a server-side
+        cursor instead of buffering the whole result (JSON only); in streaming
+        mode read pagination from the JSON meta.hasNextPage and meta.cursor
+        fields.
+      parameters:
+      - $ref: '#/components/parameters/DatasetId'
+      - name: start_time
+        in: query
+        description: >-
+          Start of the time range filter on the dataset's time index column
+          (ISO 8601). Rows on or after this time are returned.
+        schema:
+          type: string
+      - name: end_time
+        in: query
+        description: >-
+          End of the time range filter on the dataset's time index column
+          (ISO 8601). Rows before this time are returned.
+        schema:
+          type: string
+      - name: time
+        in: query
+        description: >-
+          Point-in-time filter. Accepts 'latest' or an ISO 8601 timestamp.
+          Cannot be combined with start_time or end_time.
+        schema:
+          type: string
+      - name: time_comparison
+        in: query
+        description: Comparison operator used when filtering by time.
+        schema:
+          type: string
+          enum:
+          - '='
+          - '>'
+          - '>='
+          - '<'
+          - '<='
+      - name: publish_time
+        in: query
+        description: Filter based on the dataset's publish time column.
+        schema:
+          type: string
+      - name: publish_time_start
+        in: query
+        description: Start of a publish-time range filter.
+        schema:
+          type: string
+      - name: publish_time_end
+        in: query
+        description: End of a publish-time range filter.
+        schema:
+          type: string
+      - name: filter_column
+        in: query
+        description: The column to filter results by (for example location).
+        schema:
+          type: string
+      - name: filter_value
+        in: query
+        description: The value to filter results by.
+        schema:
+          type: string
+      - name: filter_operator
+        in: query
+        description: Operator applied between filter_column and filter_value.
+        schema:
+          type: string
+          enum:
+          - '='
+          - '!='
+          - '>'
+          - '>='
+          - '<'
+          - '<='
+          - in
+          default: '='
+      - name: columns
+        in: query
+        description: Comma separated list of columns to return. Defaults to all columns.
+        schema:
+          type: string
+      - name: order
+        in: query
+        description: Sort order of results.
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+      - name: limit
+        in: query
+        description: Maximum number of rows to return across all pages.
+        schema:
+          type: integer
+      - name: page
+        in: query
+        description: Page number of results to return.
+        schema:
+          type: integer
+          default: 1
+      - name: page_size
+        in: query
+        description: Maximum number of rows to return in a single page.
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        description: Cursor for cursor-based pagination.
+        schema:
+          type: string
+      - name: timezone
+        in: query
+        description: >-
+          Timezone used when interpreting timezone-naive timestamps and when
+          resampling to frequencies of one day or longer.
+        schema:
+          type: string
+      - name: resample_frequency
+        in: query
+        description: >-
+          Frequency to resample the data to, from '1 minute' through '1 year'
+          (for example '5 minutes', '1 hour', '1 day', '1 month').
+        schema:
+          type: string
+      - name: resample_by
+        in: query
+        description: Comma separated list of columns to group by before resampling.
+        schema:
+          type: string
+      - name: resample_function
+        in: query
+        description: Aggregation function used when resampling.
+        schema:
+          type: string
+          enum:
+          - mean
+          - sum
+          - min
+          - max
+          - count
+          - stddev
+          - variance
+          default: mean
+      - $ref: '#/components/parameters/ReturnFormat'
+      - name: json_schema
+        in: query
+        description: Shape of the JSON response.
+        schema:
+          type: string
+          enum:
+          - array-of-objects
+          - array-of-arrays
+          default: array-of-objects
+      - name: download
+        in: query
+        description: Whether to return the result as a file download.
+        schema:
+          type: boolean
+          default: false
+      - name: X-Stream
+        in: header
+        description: Set to true to stream JSON rows from a server-side cursor.
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Matching rows plus pagination and dataset metadata.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryDatasetResponse'
+            text/csv:
+              schema:
+                type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /datasets/{dataset_id}/query/{filter_column_id}/{filter_value_path}:
+    get:
+      operationId: queryDatasetByColumnValue
+      tags:
+      - Query Data
+      summary: Query a dataset by column value
+      description: >-
+        Shortcut form of the query endpoint that filters by a single column
+        value in the path (for example a location or settlement point). Accepts
+        the same time-range, resampling, pagination, and format query
+        parameters as the main query endpoint.
+      parameters:
+      - $ref: '#/components/parameters/DatasetId'
+      - name: filter_column_id
+        in: path
+        required: true
+        description: The column to filter by.
+        schema:
+          type: string
+      - name: filter_value_path
+        in: path
+        required: true
+        description: The value to filter the column by.
+        schema:
+          type: string
+      - $ref: '#/components/parameters/ReturnFormat'
+      responses:
+        '200':
+          description: Matching rows plus pagination and dataset metadata.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryDatasetResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /dataset-updates/{dataset_id}:
+    get:
+      operationId: getDatasetUpdates
+      tags:
+      - Dataset Updates
+      summary: Get dataset updates
+      description: >-
+        Recent update activity for a dataset - each entry reports the update
+        time, number of rows inserted and updated, and whether the run was a
+        backfill. Useful for polling freshness without re-querying data.
+      parameters:
+      - $ref: '#/components/parameters/DatasetId'
+      responses:
+        '200':
+          description: Recent dataset update records.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetUpdatesResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /block-pricing/{iso}:
+    get:
+      operationId: getBlockPricing
+      tags:
+      - Block Pricing Data
+      summary: Get block pricing
+      description: >-
+        Returns volume-weighted block-averaged prices for an ISO over the
+        requested date range. The response is a list of columns - daily columns
+        keyed by ISO date plus appended summary columns such as MTD
+        (month-to-date) and a Month-Year label for each full month spanned.
+      parameters:
+      - $ref: '#/components/parameters/Iso'
+      responses:
+        '200':
+          description: Block-averaged prices for the ISO.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /reports/daily_peak/{iso}:
+    get:
+      operationId: getDailyPeakReport
+      tags:
+      - Reports
+      summary: Get daily peak report
+      description: >-
+        Daily peak report for the specified ISO on a given date, including
+        peaks in day-ahead market LMP values per zone (first peak only when
+        multiple peaks exist). Requires a paid Grid Status plan.
+      parameters:
+      - $ref: '#/components/parameters/Iso'
+      - name: date
+        in: query
+        description: The report date (ISO 8601 date).
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Daily peak report for the ISO.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Requires a paid Grid Status plan.
+  /pricing_locations:
+    get:
+      operationId: listPricingLocations
+      tags:
+      - Pricing Locations
+      summary: List pricing locations
+      description: List pricing locations (nodes, hubs, and zones) behind LMP datasets.
+      responses:
+        '200':
+          description: A list of pricing locations.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PricingLocationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /pricing_locations/nearby:
+    get:
+      operationId: listNearbyPricingLocations
+      tags:
+      - Pricing Locations
+      summary: List nearby pricing locations
+      description: Find pricing locations near a latitude/longitude point.
+      parameters:
+      - name: latitude
+        in: query
+        required: true
+        description: Latitude of the point of interest.
+        schema:
+          type: number
+      - name: longitude
+        in: query
+        required: true
+        description: Longitude of the point of interest.
+        schema:
+          type: number
+      responses:
+        '200':
+          description: Pricing locations near the point.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PricingLocationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /pricing_locations/{gs_entity_id}:
+    get:
+      operationId: getPricingLocation
+      tags:
+      - Pricing Locations
+      summary: Get pricing location
+      description: Fetch a single pricing location by Grid Status entity ID.
+      parameters:
+      - name: gs_entity_id
+        in: path
+        required: true
+        description: Grid Status entity ID of the pricing location.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The pricing location.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PricingLocationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /constraints:
+    get:
+      operationId: listConstraints
+      tags:
+      - Constraints
+      summary: List constraints
+      description: List transmission constraints.
+      responses:
+        '200':
+          description: A list of constraints.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/contingencies:
+    get:
+      operationId: listContingencies
+      tags:
+      - Constraints
+      summary: List contingencies
+      description: List contingencies across constraints.
+      responses:
+        '200':
+          description: A list of contingencies.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/binding:
+    get:
+      operationId: listConstraintBindingRows
+      tags:
+      - Constraints
+      summary: List constraint binding rows
+      description: List rows for intervals where constraints were binding.
+      responses:
+        '200':
+          description: Constraint binding rows.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/binding/counts:
+    get:
+      operationId: listConstraintBindingCounts
+      tags:
+      - Constraints
+      summary: List constraint binding counts by period
+      description: Counts of binding intervals per constraint, grouped by period.
+      responses:
+        '200':
+          description: Binding counts by period.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/binding/costs:
+    get:
+      operationId: listConstraintBindingCosts
+      tags:
+      - Constraints
+      summary: List constraint binding costs by period
+      description: Congestion costs attributed to binding constraints, grouped by period.
+      responses:
+        '200':
+          description: Binding costs by period.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/binding/heat_map:
+    get:
+      operationId: getConstraintBindingHeatMap
+      tags:
+      - Constraints
+      summary: Get constraint binding heat map
+      description: Heat map of constraint binding activity.
+      responses:
+        '200':
+          description: Constraint binding heat map cells.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/{gs_entity_id}:
+    get:
+      operationId: getConstraint
+      tags:
+      - Constraints
+      summary: Get constraint
+      description: Fetch a single constraint by Grid Status entity ID.
+      parameters:
+      - name: gs_entity_id
+        in: path
+        required: true
+        description: Grid Status entity ID of the constraint.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The constraint.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/{constraint_id}/shift-factors:
+    get:
+      operationId: listShiftFactors
+      tags:
+      - Constraints
+      summary: List shift factors for a constraint
+      description: Shift factors for a constraint across pricing locations.
+      parameters:
+      - $ref: '#/components/parameters/ConstraintId'
+      responses:
+        '200':
+          description: Shift factors for the constraint.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/{constraint_id}/stats:
+    get:
+      operationId: listConstraintStats
+      tags:
+      - Constraints
+      summary: List constraint stats by interval
+      description: Statistics for a constraint by interval.
+      parameters:
+      - $ref: '#/components/parameters/ConstraintId'
+      responses:
+        '200':
+          description: Constraint statistics by interval.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /constraints/locations/{location_gs_entity_id}/shift-factors:
+    get:
+      operationId: listShiftFactorsForLocation
+      tags:
+      - Constraints
+      summary: List shift factors for a location
+      description: Shift factors at a pricing location across constraints.
+      parameters:
+      - name: location_gs_entity_id
+        in: path
+        required: true
+        description: Grid Status entity ID of the pricing location.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Shift factors for the location.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /csv-exports/{dataset_id}:
+    get:
+      operationId: listCsvExports
+      tags:
+      - CSV Exports
+      summary: List available bulk export files for a dataset
+      description: >-
+        List the per-day CSV export files available on S3 for a dataset. Each
+        entry includes the partition date, object size, and last-modified
+        timestamp.
+      parameters:
+      - $ref: '#/components/parameters/DatasetId'
+      responses:
+        '200':
+          description: Available bulk export files.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetExportsListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /csv-exports/{dataset_id}/{export_date}:
+    get:
+      operationId: getCsvExportUrl
+      tags:
+      - CSV Exports
+      summary: Generate a presigned S3 URL for a bulk export file
+      description: Generate a presigned S3 URL to download a specific per-day export file.
+      parameters:
+      - $ref: '#/components/parameters/DatasetId'
+      - name: export_date
+        in: path
+        required: true
+        description: The partition date of the export file (ISO 8601 date).
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Presigned URL for the export file.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignedUrlResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api_usage:
+    get:
+      operationId: getApiUsage
+      tags:
+      - API Usage
+      summary: Get API usage
+      description: >-
+        Get API usage statistics and limits for the current user or
+        organization - plan name, rows returned limit, requests limit, rows per
+        response limit, per-second/minute/hour rate limits, and consumption for
+        the current billing period.
+      responses:
+        '200':
+          description: Usage statistics and plan limits.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIUsageResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key from https://www.gridstatus.io/settings/api.
+    apiKeyQuery:
+      type: apiKey
+      in: query
+      name: api_key
+      description: API key passed as a query parameter (alternative to the header).
+  parameters:
+    DatasetId:
+      name: dataset_id
+      in: path
+      required: true
+      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
+      schema:
+        type: string
+    Iso:
+      name: iso
+      in: path
+      required: true
+      description: ISO/RTO identifier.
+      schema:
+        type: string
+        enum:
+        - CAISO
+        - ERCOT
+        - IESO
+        - ISONE
+        - MISO
+        - NYISO
+        - PJM
+        - SPP
+    ConstraintId:
+      name: constraint_id
+      in: path
+      required: true
+      description: ID of the constraint.
+      schema:
+        type: string
+    ReturnFormat:
+      name: return_format
+      in: query
+      description: The return format of the response.
+      schema:
+        type: string
+        enum:
+        - json
+        - csv
+        default: json
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: Missing API Key.
+    NotFound:
+      description: The requested resource was not found.
+    ValidationError:
+      description: Validation error on request parameters.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: array
+                items:
+                  type: object
+    TooManyRequests:
+      description: Rate limit exceeded for your plan.
+  schemas:
+    APIInfoResponse:
+      type: object
+      required:
+      - name
+      - version
+      properties:
+        name:
+          type: string
+          example: Grid Status API
+        version:
+          type: string
+          example: 1.3.0
+    ListDatasetsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatasetResponse'
+    DatasetResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: ercot_spp_day_ahead_hourly
+        name:
+          type: string
+        description:
+          type: string
+        earliest_available_time_utc:
+          type: string
+          format: date-time
+        latest_available_time_utc:
+          type: string
+          format: date-time
+        source:
+          type: string
+        source_url:
+          type: string
+        last_checked_time_utc:
+          type: string
+          format: date-time
+        primary_key_columns:
+          type: array
+          items:
+            type: string
+        publish_time_column:
+          type: string
+          nullable: true
+        time_index_column:
+          type: string
+        subseries_index_column:
+          type: string
+          nullable: true
+        all_columns:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+              description:
+                type: string
+        number_of_rows_approximate:
+          type: integer
+        table_type:
+          type: string
+        data_frequency:
+          type: string
+        publication_frequency:
+          type: string
+        is_published:
+          type: boolean
+        status:
+          type: string
+        popularity_rank:
+          type: integer
+    DatasetAuditResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+    DatasetUpdatesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatasetUpdateResponse'
+    DatasetUpdateResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        dataset:
+          type: string
+        time_utc:
+          type: string
+          format: date-time
+        num_rows_updated:
+          type: integer
+        num_rows_inserted:
+          type: integer
+        is_backfill:
+          type: boolean
+    QueryDatasetResponse:
+      type: object
+      properties:
+        status_code:
+          type: integer
+        data:
+          type: array
+          description: Matching rows (array of objects by default).
+          items:
+            type: object
+        meta:
+          type: object
+          properties:
+            page:
+              type: integer
+            pageSize:
+              type: integer
+            hasNextPage:
+              type: boolean
+            cursor:
+              type: string
+              nullable: true
+        dataset_metadata:
+          $ref: '#/components/schemas/DatasetResponse'
+    PricingLocationResponse:
+      type: object
+      properties:
+        gs_entity_id:
+          type: string
+        name:
+          type: string
+        iso:
+          type: string
+        location_type:
+          type: string
+        latitude:
+          type: number
+          nullable: true
+        longitude:
+          type: number
+          nullable: true
+    DatasetExportsListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              size_bytes:
+                type: integer
+              last_modified_utc:
+                type: string
+                format: date-time
+    PresignedUrlResponse:
+      type: object
+      properties:
+        url:
+          type: string
+          description: Presigned S3 URL for downloading the export file.
+    APIUsageResponse:
+      type: object
+      properties:
+        plan:
+          type: string
+        limits:
+          $ref: '#/components/schemas/APIUsageLimits'
+        current_period_usage:
+          type: object
+          properties:
+            total_requests:
+              type: integer
+            total_api_rows_returned:
+              type: integer
+    APIUsageLimits:
+      type: object
+      properties:
+        api_rows_returned_limit:
+          type: integer
+        api_requests_limit:
+          type: integer
+        api_rows_per_response_limit:
+          type: integer
+        per_second_api_rate_limit:
+          type: integer
+        per_minute_api_rate_limit:
+          type: integer
+        per_hour_api_rate_limit:
+          type: integer
