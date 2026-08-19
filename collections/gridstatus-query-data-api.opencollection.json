@@ -1,0 +1,226 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Status API Info Query Data API",
+    "version": "1.3.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Query Data",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Query a dataset",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.gridstatus.io/v1/datasets/:dataset_id/query",
+            "headers": [
+              {
+                "name": "X-Stream",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "dataset_id",
+                "value": "",
+                "type": "path",
+                "description": "ID of the dataset (for example ercot_spp_day_ahead_hourly)."
+              },
+              {
+                "name": "start_time",
+                "value": "",
+                "type": "query",
+                "description": "Start of the time range filter on the dataset's time index column (ISO 8601). Rows on or after this time are returned."
+              },
+              {
+                "name": "end_time",
+                "value": "",
+                "type": "query",
+                "description": "End of the time range filter on the dataset's time index column (ISO 8601). Rows before this time are returned."
+              },
+              {
+                "name": "time",
+                "value": "",
+                "type": "query",
+                "description": "Point-in-time filter. Accepts 'latest' or an ISO 8601 timestamp. Cannot be combined with start_time or end_time."
+              },
+              {
+                "name": "time_comparison",
+                "value": "",
+                "type": "query",
+                "description": "Comparison operator used when filtering by time."
+              },
+              {
+                "name": "publish_time",
+                "value": "",
+                "type": "query",
+                "description": "Filter based on the dataset's publish time column."
+              },
+              {
+                "name": "publish_time_start",
+                "value": "",
+                "type": "query",
+                "description": "Start of a publish-time range filter."
+              },
+              {
+                "name": "publish_time_end",
+                "value": "",
+                "type": "query",
+                "description": "End of a publish-time range filter."
+              },
+              {
+                "name": "filter_column",
+                "value": "",
+                "type": "query",
+                "description": "The column to filter results by (for example location)."
+              },
+              {
+                "name": "filter_value",
+                "value": "",
+                "type": "query",
+                "description": "The value to filter results by."
+              },
+              {
+                "name": "filter_operator",
+                "value": "",
+                "type": "query",
+                "description": "Operator applied between filter_column and filter_value."
+              },
+              {
+                "name": "columns",
+                "value": "",
+                "type": "query",
+                "description": "Comma separated list of columns to return. Defaults to all columns."
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order of results."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of rows to return across all pages."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number of results to return."
+              },
+              {
+                "name": "page_size",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of rows to return in a single page."
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for cursor-based pagination."
+              },
+              {
+                "name": "timezone",
+                "value": "",
+                "type": "query",
+                "description": "Timezone used when interpreting timezone-naive timestamps and when resampling to frequencies of one day or longer."
+              },
+              {
+                "name": "resample_frequency",
+                "value": "",
+                "type": "query",
+                "description": "Frequency to resample the data to, from '1 minute' through '1 year' (for example '5 minutes', '1 hour', '1 day', '1 month')."
+              },
+              {
+                "name": "resample_by",
+                "value": "",
+                "type": "query",
+                "description": "Comma separated list of columns to group by before resampling."
+              },
+              {
+                "name": "resample_function",
+                "value": "",
+                "type": "query",
+                "description": "Aggregation function used when resampling."
+              },
+              {
+                "name": "return_format",
+                "value": "",
+                "type": "query",
+                "description": "The return format of the response."
+              },
+              {
+                "name": "json_schema",
+                "value": "",
+                "type": "query",
+                "description": "Shape of the JSON response."
+              },
+              {
+                "name": "download",
+                "value": "",
+                "type": "query",
+                "description": "Whether to return the result as a file download."
+              }
+            ]
+          },
+          "docs": "Query a dataset and return matching rows as JSON or CSV. Example dataset IDs include ercot_spp_day_ahead_hourly (ERCOT day-ahead settlement point prices), ercot_fuel_mix, ercot_as_prices, caiso_load, caiso_lmp_real_time_5_min, and pjm_lmp_real_time_5_min. Pass the X-Stream true request header to stream JSON rows from a server-side cursor instead of buffering the whole result (JSON only); in streaming mode read pagination from the JSON meta.hasNextPage and meta.cursor fields."
+        },
+        {
+          "info": {
+            "name": "Query a dataset by column value",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.gridstatus.io/v1/datasets/:dataset_id/query/:filter_column_id/:filter_value_path",
+            "params": [
+              {
+                "name": "dataset_id",
+                "value": "",
+                "type": "path",
+                "description": "ID of the dataset (for example ercot_spp_day_ahead_hourly)."
+              },
+              {
+                "name": "filter_column_id",
+                "value": "",
+                "type": "path",
+                "description": "The column to filter by."
+              },
+              {
+                "name": "filter_value_path",
+                "value": "",
+                "type": "path",
+                "description": "The value to filter the column by."
+              },
+              {
+                "name": "return_format",
+                "value": "",
+                "type": "query",
+                "description": "The return format of the response."
+              }
+            ]
+          },
+          "docs": "Shortcut form of the query endpoint that filters by a single column value in the path (for example a location or settlement point). Accepts the same time-range, resampling, pagination, and format query parameters as the main query endpoint."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

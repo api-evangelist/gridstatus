@@ -1,0 +1,1059 @@
+{
+  "item": [
+    {
+      "id": "5d29f13b-c121-469b-bb92-02079c53c255",
+      "name": "Query Data",
+      "description": {
+        "content": "Query dataset rows with filters, resampling, and pagination.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "31a5fde8-eb92-4790-b4cc-40fdf2108371",
+          "name": "Query a dataset",
+          "request": {
+            "name": "Query a dataset",
+            "description": {
+              "content": "Query a dataset and return matching rows as JSON or CSV. Example dataset IDs include ercot_spp_day_ahead_hourly (ERCOT day-ahead settlement point prices), ercot_fuel_mix, ercot_as_prices, caiso_load, caiso_lmp_real_time_5_min, and pjm_lmp_real_time_5_min. Pass the X-Stream true request header to stream JSON rows from a server-side cursor instead of buffering the whole result (JSON only); in streaming mode read pagination from the JSON meta.hasNextPage and meta.cursor fields.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "datasets",
+                ":dataset_id",
+                "query"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "start_time",
+                  "value": "<string>",
+                  "description": "Start of the time range filter on the dataset's time index column (ISO 8601). Rows on or after this time are returned."
+                },
+                {
+                  "disabled": false,
+                  "key": "end_time",
+                  "value": "<string>",
+                  "description": "End of the time range filter on the dataset's time index column (ISO 8601). Rows before this time are returned."
+                },
+                {
+                  "disabled": false,
+                  "key": "time",
+                  "value": "<string>",
+                  "description": "Point-in-time filter. Accepts 'latest' or an ISO 8601 timestamp. Cannot be combined with start_time or end_time."
+                },
+                {
+                  "disabled": false,
+                  "key": "time_comparison",
+                  "value": "<string>",
+                  "description": "Comparison operator used when filtering by time."
+                },
+                {
+                  "disabled": false,
+                  "key": "publish_time",
+                  "value": "<string>",
+                  "description": "Filter based on the dataset's publish time column."
+                },
+                {
+                  "disabled": false,
+                  "key": "publish_time_start",
+                  "value": "<string>",
+                  "description": "Start of a publish-time range filter."
+                },
+                {
+                  "disabled": false,
+                  "key": "publish_time_end",
+                  "value": "<string>",
+                  "description": "End of a publish-time range filter."
+                },
+                {
+                  "disabled": false,
+                  "key": "filter_column",
+                  "value": "<string>",
+                  "description": "The column to filter results by (for example location)."
+                },
+                {
+                  "disabled": false,
+                  "key": "filter_value",
+                  "value": "<string>",
+                  "description": "The value to filter results by."
+                },
+                {
+                  "disabled": false,
+                  "key": "filter_operator",
+                  "value": "=",
+                  "description": "Operator applied between filter_column and filter_value."
+                },
+                {
+                  "disabled": false,
+                  "key": "columns",
+                  "value": "<string>",
+                  "description": "Comma separated list of columns to return. Defaults to all columns."
+                },
+                {
+                  "disabled": false,
+                  "key": "order",
+                  "value": "<string>",
+                  "description": "Sort order of results."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "<integer>",
+                  "description": "Maximum number of rows to return across all pages."
+                },
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number of results to return."
+                },
+                {
+                  "disabled": false,
+                  "key": "page_size",
+                  "value": "<integer>",
+                  "description": "Maximum number of rows to return in a single page."
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Cursor for cursor-based pagination."
+                },
+                {
+                  "disabled": false,
+                  "key": "timezone",
+                  "value": "<string>",
+                  "description": "Timezone used when interpreting timezone-naive timestamps and when resampling to frequencies of one day or longer."
+                },
+                {
+                  "disabled": false,
+                  "key": "resample_frequency",
+                  "value": "<string>",
+                  "description": "Frequency to resample the data to, from '1 minute' through '1 year' (for example '5 minutes', '1 hour', '1 day', '1 month')."
+                },
+                {
+                  "disabled": false,
+                  "key": "resample_by",
+                  "value": "<string>",
+                  "description": "Comma separated list of columns to group by before resampling."
+                },
+                {
+                  "disabled": false,
+                  "key": "resample_function",
+                  "value": "mean",
+                  "description": "Aggregation function used when resampling."
+                },
+                {
+                  "disabled": false,
+                  "key": "return_format",
+                  "value": "json",
+                  "description": "The return format of the response."
+                },
+                {
+                  "disabled": false,
+                  "key": "json_schema",
+                  "value": "array-of-objects",
+                  "description": "Shape of the JSON response."
+                },
+                {
+                  "disabled": false,
+                  "key": "download",
+                  "value": "false",
+                  "description": "Whether to return the result as a file download."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "dataset_id",
+                  "description": "(Required) ID of the dataset (for example ercot_spp_day_ahead_hourly)."
+                }
+              ]
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "Set to true to stream JSON rows from a server-side cursor.",
+                "key": "X-Stream",
+                "value": "<boolean>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "83422375-4310-40e0-a661-087b04943812",
+              "name": "Matching rows plus pagination and dataset metadata.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "datasets",
+                    ":dataset_id",
+                    "query"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "start_time",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "end_time",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "time",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "time_comparison",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "publish_time",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "publish_time_start",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "publish_time_end",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filter_column",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filter_value",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filter_operator",
+                      "value": "="
+                    },
+                    {
+                      "key": "columns",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "order",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "timezone",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "resample_frequency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "resample_by",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "resample_function",
+                      "value": "mean"
+                    },
+                    {
+                      "key": "return_format",
+                      "value": "json"
+                    },
+                    {
+                      "key": "json_schema",
+                      "value": "array-of-objects"
+                    },
+                    {
+                      "key": "download",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dataset_id",
+                      "description": "(Required) ID of the dataset (for example ercot_spp_day_ahead_hourly)."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Set to true to stream JSON rows from a server-side cursor.",
+                    "key": "X-Stream",
+                    "value": "<boolean>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status_code\": 4628,\n  \"meta\": {\n    \"page\": 5120,\n    \"pageSize\": 9673,\n    \"hasNextPage\": true,\n    \"cursor\": \"string\"\n  },\n  \"dataset_metadata\": {\n    \"id\": \"ercot_spp_day_ahead_hourly\",\n    \"name\": \"string\",\n    \"description\": \"string\",\n    \"earliest_available_time_utc\": \"1985-11-30T02:29:10.420Z\",\n    \"latest_available_time_utc\": \"2022-09-28T16:44:58.107Z\",\n    \"source\": \"string\",\n    \"source_url\": \"string\",\n    \"last_checked_time_utc\": \"2019-01-05T05:11:39.809Z\",\n    \"primary_key_columns\": [\n      \"string\",\n      \"string\"\n    ],\n    \"publish_time_column\": \"string\",\n    \"time_index_column\": \"string\",\n    \"subseries_index_column\": \"string\",\n    \"all_columns\": [\n      {\n        \"name\": \"string\",\n        \"type\": \"string\",\n        \"description\": \"string\"\n      },\n      {\n        \"name\": \"string\",\n        \"type\": \"string\",\n        \"description\": \"string\"\n      }\n    ],\n    \"number_of_rows_approximate\": 6353,\n    \"table_type\": \"string\",\n    \"data_frequency\": \"string\",\n    \"publication_frequency\": \"string\",\n    \"is_published\": false,\n    \"status\": \"string\",\n    \"popularity_rank\": 9975\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e718e32c-e6d8-4f8b-b784-3363dbad2464",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "datasets",
+                    ":dataset_id",
+                    "query"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "start_time",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "end_time",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "time",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "time_comparison",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "publish_time",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "publish_time_start",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "publish_time_end",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filter_column",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filter_value",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filter_operator",
+                      "value": "="
+                    },
+                    {
+                      "key": "columns",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "order",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "timezone",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "resample_frequency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "resample_by",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "resample_function",
+                      "value": "mean"
+                    },
+                    {
+                      "key": "return_format",
+                      "value": "json"
+                    },
+                    {
+                      "key": "json_schema",
+                      "value": "array-of-objects"
+                    },
+                    {
+                      "key": "download",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dataset_id",
+                      "description": "(Required) ID of the dataset (for example ercot_spp_day_ahead_hourly)."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Set to true to stream JSON rows from a server-side cursor.",
+                    "key": "X-Stream",
+                    "value": "<boolean>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Missing API Key.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1d03d029-eea7-42fa-be74-26094059f01c",
+              "name": "Validation error on request parameters.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "datasets",
+                    ":dataset_id",
+                    "query"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "start_time",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "end_time",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "time",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "time_comparison",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "publish_time",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "publish_time_start",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "publish_time_end",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filter_column",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filter_value",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filter_operator",
+                      "value": "="
+                    },
+                    {
+                      "key": "columns",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "order",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "timezone",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "resample_frequency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "resample_by",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "resample_function",
+                      "value": "mean"
+                    },
+                    {
+                      "key": "return_format",
+                      "value": "json"
+                    },
+                    {
+                      "key": "json_schema",
+                      "value": "array-of-objects"
+                    },
+                    {
+                      "key": "download",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dataset_id",
+                      "description": "(Required) ID of the dataset (for example ercot_spp_day_ahead_hourly)."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Set to true to stream JSON rows from a server-side cursor.",
+                    "key": "X-Stream",
+                    "value": "<boolean>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8cb162c7-3766-4680-8dd0-d8e37432313d",
+              "name": "Rate limit exceeded for your plan.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "datasets",
+                    ":dataset_id",
+                    "query"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "start_time",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "end_time",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "time",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "time_comparison",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "publish_time",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "publish_time_start",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "publish_time_end",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filter_column",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filter_value",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filter_operator",
+                      "value": "="
+                    },
+                    {
+                      "key": "columns",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "order",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "timezone",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "resample_frequency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "resample_by",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "resample_function",
+                      "value": "mean"
+                    },
+                    {
+                      "key": "return_format",
+                      "value": "json"
+                    },
+                    {
+                      "key": "json_schema",
+                      "value": "array-of-objects"
+                    },
+                    {
+                      "key": "download",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dataset_id",
+                      "description": "(Required) ID of the dataset (for example ercot_spp_day_ahead_hourly)."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Set to true to stream JSON rows from a server-side cursor.",
+                    "key": "X-Stream",
+                    "value": "<boolean>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3efa4dee-2340-41b6-94e6-cd387b486a20",
+          "name": "Query a dataset by column value",
+          "request": {
+            "name": "Query a dataset by column value",
+            "description": {
+              "content": "Shortcut form of the query endpoint that filters by a single column value in the path (for example a location or settlement point). Accepts the same time-range, resampling, pagination, and format query parameters as the main query endpoint.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "datasets",
+                ":dataset_id",
+                "query",
+                ":filter_column_id",
+                ":filter_value_path"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "return_format",
+                  "value": "json",
+                  "description": "The return format of the response."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "dataset_id",
+                  "description": "(Required) ID of the dataset (for example ercot_spp_day_ahead_hourly)."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "filter_column_id",
+                  "description": "(Required) The column to filter by."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "filter_value_path",
+                  "description": "(Required) The value to filter the column by."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "c481c25a-bb23-41cd-a822-703a19619726",
+              "name": "Matching rows plus pagination and dataset metadata.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "datasets",
+                    ":dataset_id",
+                    "query",
+                    ":filter_column_id",
+                    ":filter_value_path"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "return_format",
+                      "value": "json"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dataset_id",
+                      "description": "(Required) ID of the dataset (for example ercot_spp_day_ahead_hourly)."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "filter_column_id",
+                      "description": "(Required) The column to filter by."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "filter_value_path",
+                      "description": "(Required) The value to filter the column by."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status_code\": 4714,\n  \"meta\": {\n    \"page\": 1011,\n    \"pageSize\": 2516,\n    \"hasNextPage\": false,\n    \"cursor\": \"string\"\n  },\n  \"dataset_metadata\": {\n    \"id\": \"ercot_spp_day_ahead_hourly\",\n    \"name\": \"string\",\n    \"description\": \"string\",\n    \"earliest_available_time_utc\": \"2023-12-28T05:34:24.491Z\",\n    \"latest_available_time_utc\": \"2005-12-03T18:18:12.377Z\",\n    \"source\": \"string\",\n    \"source_url\": \"string\",\n    \"last_checked_time_utc\": \"1957-02-25T18:53:58.815Z\",\n    \"primary_key_columns\": [\n      \"string\",\n      \"string\"\n    ],\n    \"publish_time_column\": \"string\",\n    \"time_index_column\": \"string\",\n    \"subseries_index_column\": \"string\",\n    \"all_columns\": [\n      {\n        \"name\": \"string\",\n        \"type\": \"string\",\n        \"description\": \"string\"\n      },\n      {\n        \"name\": \"string\",\n        \"type\": \"string\",\n        \"description\": \"string\"\n      }\n    ],\n    \"number_of_rows_approximate\": 2397,\n    \"table_type\": \"string\",\n    \"data_frequency\": \"string\",\n    \"publication_frequency\": \"string\",\n    \"is_published\": false,\n    \"status\": \"string\",\n    \"popularity_rank\": 1851\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "08592f1d-48e0-4f3d-93d4-03b1d9e7f792",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "datasets",
+                    ":dataset_id",
+                    "query",
+                    ":filter_column_id",
+                    ":filter_value_path"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "return_format",
+                      "value": "json"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dataset_id",
+                      "description": "(Required) ID of the dataset (for example ercot_spp_day_ahead_hourly)."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "filter_column_id",
+                      "description": "(Required) The column to filter by."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "filter_value_path",
+                      "description": "(Required) The value to filter the column by."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Missing API Key.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.gridstatus.io/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "d7db92a1-29b6-4757-8504-e6409508e88b",
+    "name": "Grid Status API Info Query Data API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP. Data is organized as datasets - day-ahead and real-time LMP and settlement point prices, load and load forecasts, fuel mix, ancillary services, storage, and transmission constraints - that are listed, described, and queried through a uniform interface with time-range filters, column filters, resampling, pagination, and JSON or CSV output. Authenticate with an API key from the Grid Status settings page, passed in the x-api-key header (or api_key query parameter). Grounded in the live OpenAPI 3.1 document published at https://api.gridstatus.io/openapi.json (version 1.3.0).\n\nContact Support:\n Name: Grid Status\n Email: contact@gridstatus.io",
+      "type": "text/plain"
+    }
+  }
+}

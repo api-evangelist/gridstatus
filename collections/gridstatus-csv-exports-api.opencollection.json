@@ -1,0 +1,70 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Status API Info CSV Exports API",
+    "version": "1.3.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "CSV Exports",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List available bulk export files for a dataset",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.gridstatus.io/v1/csv-exports/:dataset_id",
+            "params": [
+              {
+                "name": "dataset_id",
+                "value": "",
+                "type": "path",
+                "description": "ID of the dataset (for example ercot_spp_day_ahead_hourly)."
+              }
+            ]
+          },
+          "docs": "List the per-day CSV export files available on S3 for a dataset. Each entry includes the partition date, object size, and last-modified timestamp."
+        },
+        {
+          "info": {
+            "name": "Generate a presigned S3 URL for a bulk export file",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.gridstatus.io/v1/csv-exports/:dataset_id/:export_date",
+            "params": [
+              {
+                "name": "dataset_id",
+                "value": "",
+                "type": "path",
+                "description": "ID of the dataset (for example ercot_spp_day_ahead_hourly)."
+              },
+              {
+                "name": "export_date",
+                "value": "",
+                "type": "path",
+                "description": "The partition date of the export file (ISO 8601 date)."
+              }
+            ]
+          },
+          "docs": "Generate a presigned S3 URL to download a specific per-day export file."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

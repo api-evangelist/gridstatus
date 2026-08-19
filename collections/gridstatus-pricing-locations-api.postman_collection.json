@@ -1,0 +1,521 @@
+{
+  "item": [
+    {
+      "id": "8cb0ab3b-fd51-4c56-b252-edeeb887464b",
+      "name": "Pricing Locations",
+      "description": {
+        "content": "Nodes, hubs, and zones behind LMP datasets.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "3a8fb074-2f08-43c5-bf0f-1ecc9569417a",
+          "name": "List pricing locations",
+          "request": {
+            "name": "List pricing locations",
+            "description": {
+              "content": "List pricing locations (nodes, hubs, and zones) behind LMP datasets.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "pricing_locations"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "fc7c0518-2624-458b-9fa8-0f682f3d23d7",
+              "name": "A list of pricing locations.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "pricing_locations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"gs_entity_id\": \"string\",\n    \"name\": \"string\",\n    \"iso\": \"string\",\n    \"location_type\": \"string\",\n    \"latitude\": 7797.739855250494,\n    \"longitude\": 6233.665213984828\n  },\n  {\n    \"gs_entity_id\": \"string\",\n    \"name\": \"string\",\n    \"iso\": \"string\",\n    \"location_type\": \"string\",\n    \"latitude\": 1414.3377520661916,\n    \"longitude\": 6170.604853482082\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f473c068-83c3-4283-a77d-62363eb57ebf",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "pricing_locations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Missing API Key.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "403e7c18-152f-452b-8510-96eb85e12a7c",
+          "name": "List nearby pricing locations",
+          "request": {
+            "name": "List nearby pricing locations",
+            "description": {
+              "content": "Find pricing locations near a latitude/longitude point.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "pricing_locations",
+                "nearby"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "latitude",
+                  "value": "<number>",
+                  "description": "(Required) Latitude of the point of interest."
+                },
+                {
+                  "disabled": false,
+                  "key": "longitude",
+                  "value": "<number>",
+                  "description": "(Required) Longitude of the point of interest."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "83ca2f55-3f3b-4e64-b520-9d84489120e9",
+              "name": "Pricing locations near the point.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "pricing_locations",
+                    "nearby"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "latitude",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "longitude",
+                      "value": "<number>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"gs_entity_id\": \"string\",\n    \"name\": \"string\",\n    \"iso\": \"string\",\n    \"location_type\": \"string\",\n    \"latitude\": 7797.739855250494,\n    \"longitude\": 6233.665213984828\n  },\n  {\n    \"gs_entity_id\": \"string\",\n    \"name\": \"string\",\n    \"iso\": \"string\",\n    \"location_type\": \"string\",\n    \"latitude\": 1414.3377520661916,\n    \"longitude\": 6170.604853482082\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c133b1e3-2fef-4def-88b9-1acc0156b401",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "pricing_locations",
+                    "nearby"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "latitude",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "longitude",
+                      "value": "<number>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Missing API Key.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "99fcbd62-a395-449e-b363-03bf167f6603",
+          "name": "Get pricing location",
+          "request": {
+            "name": "Get pricing location",
+            "description": {
+              "content": "Fetch a single pricing location by Grid Status entity ID.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "pricing_locations",
+                ":gs_entity_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "gs_entity_id",
+                  "description": "(Required) Grid Status entity ID of the pricing location."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b85aaa18-8684-4da4-9143-bf06ffe6e7e7",
+              "name": "The pricing location.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "pricing_locations",
+                    ":gs_entity_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "gs_entity_id",
+                      "description": "(Required) Grid Status entity ID of the pricing location."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"gs_entity_id\": \"string\",\n  \"name\": \"string\",\n  \"iso\": \"string\",\n  \"location_type\": \"string\",\n  \"latitude\": 4205.500223855751,\n  \"longitude\": 3144.8471999031503\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f8bfb344-c273-41db-95b9-d72d6979eaa2",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "pricing_locations",
+                    ":gs_entity_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "gs_entity_id",
+                      "description": "(Required) Grid Status entity ID of the pricing location."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Missing API Key.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a522096c-b523-4a94-b6b3-8e95fc55b434",
+              "name": "The requested resource was not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "pricing_locations",
+                    ":gs_entity_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "gs_entity_id",
+                      "description": "(Required) Grid Status entity ID of the pricing location."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.gridstatus.io/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "71491e4a-2086-4a5f-bf0b-85e4b24305b8",
+    "name": "Grid Status API Info Pricing Locations API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP. Data is organized as datasets - day-ahead and real-time LMP and settlement point prices, load and load forecasts, fuel mix, ancillary services, storage, and transmission constraints - that are listed, described, and queried through a uniform interface with time-range filters, column filters, resampling, pagination, and JSON or CSV output. Authenticate with an API key from the Grid Status settings page, passed in the x-api-key header (or api_key query parameter). Grounded in the live OpenAPI 3.1 document published at https://api.gridstatus.io/openapi.json (version 1.3.0).\n\nContact Support:\n Name: Grid Status\n Email: contact@gridstatus.io",
+      "type": "text/plain"
+    }
+  }
+}

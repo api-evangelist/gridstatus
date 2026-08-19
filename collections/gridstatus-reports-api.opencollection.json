@@ -1,0 +1,51 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Status API Info Reports API",
+    "version": "1.3.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Reports",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get daily peak report",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.gridstatus.io/v1/reports/daily_peak/:iso",
+            "params": [
+              {
+                "name": "iso",
+                "value": "",
+                "type": "path",
+                "description": "ISO/RTO identifier."
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "The report date (ISO 8601 date)."
+              }
+            ]
+          },
+          "docs": "Daily peak report for the specified ISO on a given date, including peaks in day-ahead market LMP values per zone (first peak only when multiple peaks exist). Requires a paid Grid Status plan."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
