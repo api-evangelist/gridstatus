@@ -11,6 +11,18 @@ description: Grid Status is a United States electricity grid and power market da
   maintains the open-source gridstatus Python library (BSD-3-Clause) for pulling
   raw data directly from ISO/RTO sources, and the gridstatusio client for the
   hosted API.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: freemium
   onboarding: self-serve
