@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Grid Status API Info Dataset Metadata API
-  description: The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP. Data is organized as datasets - day-ahead and real-time LMP and settlement point prices, load and load forecasts, fuel mix, ancillary services, storage, and transmission constraints - that are listed, described, and queried through a uniform interface with time-range filters, column filters, resampling, pagination, and JSON or CSV output. Authenticate with an API key from the Grid Status settings page, passed in the x-api-key header (or api_key query parameter). Grounded in the live OpenAPI 3.1 document published at https://api.gridstatus.io/openapi.json (version 1.3.0).
+  title: Grid Status Dataset Metadata API
+  description: The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP.
   version: 1.3.0
   contact:
     name: Grid Status
@@ -57,8 +57,6 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   responses:
-    NotFound:
-      description: The requested resource was not found.
     Unauthorized:
       description: Missing or invalid API key.
       content:
@@ -69,7 +67,16 @@ components:
               detail:
                 type: string
                 example: Missing API Key.
+    NotFound:
+      description: The requested resource was not found.
   parameters:
+    DatasetId:
+      name: dataset_id
+      in: path
+      required: true
+      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
+      schema:
+        type: string
     ReturnFormat:
       name: return_format
       in: query
@@ -80,21 +87,7 @@ components:
         - json
         - csv
         default: json
-    DatasetId:
-      name: dataset_id
-      in: path
-      required: true
-      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
-      schema:
-        type: string
   schemas:
-    ListDatasetsResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/DatasetResponse'
     DatasetResponse:
       type: object
       properties:
@@ -123,13 +116,15 @@ components:
           items:
             type: string
         publish_time_column:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         time_index_column:
           type: string
         subseries_index_column:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         all_columns:
           type: array
           items:
@@ -155,6 +150,13 @@ components:
           type: string
         popularity_rank:
           type: integer
+    ListDatasetsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatasetResponse'
   securitySchemes:
     apiKeyHeader:
       type: apiKey

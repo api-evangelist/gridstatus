@@ -1,24 +1,14 @@
 {
   "provider": "gridstatus",
   "sources": [
-    "gridstatus-api-info-api-openapi.yml",
-    "gridstatus-api-usage-api-openapi.yml",
-    "gridstatus-block-pricing-data-api-openapi.yml",
-    "gridstatus-constraints-api-openapi.yml",
-    "gridstatus-csv-exports-api-openapi.yml",
-    "gridstatus-dataset-audit-api-openapi.yml",
-    "gridstatus-dataset-metadata-api-openapi.yml",
-    "gridstatus-dataset-updates-api-openapi.yml",
-    "gridstatus-pricing-locations-api-openapi.yml",
-    "gridstatus-query-data-api-openapi.yml",
-    "gridstatus-reports-api-openapi.yml"
+    "_original/gridstatus-openapi.yml"
   ],
   "outputs": [
     "gridstatus-api-info-api-openapi.yml",
     "gridstatus-api-usage-api-openapi.yml",
     "gridstatus-block-pricing-data-api-openapi.yml",
-    "gridstatus-constraints-api-openapi.yml",
     "gridstatus-csv-exports-api-openapi.yml",
+    "gridstatus-constraints-api-openapi.yml",
     "gridstatus-dataset-audit-api-openapi.yml",
     "gridstatus-dataset-metadata-api-openapi.yml",
     "gridstatus-dataset-updates-api-openapi.yml",
@@ -29,6 +19,22 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "gridstatus-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "gridstatus-api-info-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "gridstatus-api-usage-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "gridstatus-block-pricing-data-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "gridstatus-constraints-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "gridstatus-csv-exports-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "gridstatus-dataset-audit-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "gridstatus-dataset-metadata-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "gridstatus-dataset-updates-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "gridstatus-pricing-locations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "gridstatus-query-data-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "gridstatus-reports-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
