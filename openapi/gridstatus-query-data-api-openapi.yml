@@ -223,48 +223,6 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  responses:
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: Missing API Key.
-    ValidationError:
-      description: Validation error on request parameters.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: array
-                items:
-                  type: object
-    TooManyRequests:
-      description: Rate limit exceeded for your plan.
-  parameters:
-    DatasetId:
-      name: dataset_id
-      in: path
-      required: true
-      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
-      schema:
-        type: string
-    ReturnFormat:
-      name: return_format
-      in: query
-      description: The return format of the response.
-      schema:
-        type: string
-        enum:
-        - json
-        - csv
-        default: json
   schemas:
     DatasetResponse:
       type: object
@@ -353,6 +311,48 @@ components:
               - 'null'
         dataset_metadata:
           $ref: '#/components/schemas/DatasetResponse'
+  parameters:
+    DatasetId:
+      name: dataset_id
+      in: path
+      required: true
+      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
+      schema:
+        type: string
+    ReturnFormat:
+      name: return_format
+      in: query
+      description: The return format of the response.
+      schema:
+        type: string
+        enum:
+        - json
+        - csv
+        default: json
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: Missing API Key.
+    TooManyRequests:
+      description: Rate limit exceeded for your plan.
+    ValidationError:
+      description: Validation error on request parameters.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: array
+                items:
+                  type: object
   securitySchemes:
     apiKeyHeader:
       type: apiKey

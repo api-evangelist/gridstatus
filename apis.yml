@@ -45,7 +45,7 @@ tags:
 - LMP
 - Load
 - Fuel Mix
-- Open-Source
+- Open Source
 tags_raw:
 - Day-Ahead Prices
 - Electricity
@@ -55,6 +55,7 @@ tags_raw:
 - Load
 - Fuel Mix
 - Open Source
+- Open-Source
 created: '2026-07-11'
 modified: '2026-07-11'
 specificationVersion: '0.23'

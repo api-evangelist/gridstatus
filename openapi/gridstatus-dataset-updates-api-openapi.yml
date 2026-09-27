@@ -36,22 +36,7 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  parameters:
-    DatasetId:
-      name: dataset_id
-      in: path
-      required: true
-      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
-      schema:
-        type: string
   schemas:
-    DatasetUpdatesResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/DatasetUpdateResponse'
     DatasetUpdateResponse:
       type: object
       properties:
@@ -68,6 +53,21 @@ components:
           type: integer
         is_backfill:
           type: boolean
+    DatasetUpdatesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatasetUpdateResponse'
+  parameters:
+    DatasetId:
+      name: dataset_id
+      in: path
+      required: true
+      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
+      schema:
+        type: string
   responses:
     Unauthorized:
       description: Missing or invalid API key.

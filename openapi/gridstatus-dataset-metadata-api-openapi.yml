@@ -56,37 +56,6 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
-  responses:
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: Missing API Key.
-    NotFound:
-      description: The requested resource was not found.
-  parameters:
-    DatasetId:
-      name: dataset_id
-      in: path
-      required: true
-      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
-      schema:
-        type: string
-    ReturnFormat:
-      name: return_format
-      in: query
-      description: The return format of the response.
-      schema:
-        type: string
-        enum:
-        - json
-        - csv
-        default: json
   schemas:
     DatasetResponse:
       type: object
@@ -157,6 +126,37 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DatasetResponse'
+  parameters:
+    ReturnFormat:
+      name: return_format
+      in: query
+      description: The return format of the response.
+      schema:
+        type: string
+        enum:
+        - json
+        - csv
+        default: json
+    DatasetId:
+      name: dataset_id
+      in: path
+      required: true
+      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
+      schema:
+        type: string
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: Missing API Key.
   securitySchemes:
     apiKeyHeader:
       type: apiKey

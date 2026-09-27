@@ -36,6 +36,14 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
+  schemas:
+    DatasetAuditResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
   parameters:
     DatasetId:
       name: dataset_id
@@ -55,14 +63,6 @@ components:
               detail:
                 type: string
                 example: Missing API Key.
-  schemas:
-    DatasetAuditResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            type: object
   securitySchemes:
     apiKeyHeader:
       type: apiKey
