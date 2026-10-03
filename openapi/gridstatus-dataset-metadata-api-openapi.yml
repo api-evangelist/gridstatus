@@ -57,6 +57,13 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   schemas:
+    ListDatasetsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatasetResponse'
     DatasetResponse:
       type: object
       properties:
@@ -119,14 +126,14 @@ components:
           type: string
         popularity_rank:
           type: integer
-    ListDatasetsResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/DatasetResponse'
   parameters:
+    DatasetId:
+      name: dataset_id
+      in: path
+      required: true
+      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
+      schema:
+        type: string
     ReturnFormat:
       name: return_format
       in: query
@@ -137,13 +144,6 @@ components:
         - json
         - csv
         default: json
-    DatasetId:
-      name: dataset_id
-      in: path
-      required: true
-      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
-      schema:
-        type: string
   responses:
     NotFound:
       description: The requested resource was not found.

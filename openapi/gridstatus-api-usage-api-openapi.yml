@@ -35,6 +35,20 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
+    APIUsageResponse:
+      type: object
+      properties:
+        plan:
+          type: string
+        limits:
+          $ref: '#/components/schemas/APIUsageLimits'
+        current_period_usage:
+          type: object
+          properties:
+            total_requests:
+              type: integer
+            total_api_rows_returned:
+              type: integer
     APIUsageLimits:
       type: object
       properties:
@@ -50,20 +64,6 @@ components:
           type: integer
         per_hour_api_rate_limit:
           type: integer
-    APIUsageResponse:
-      type: object
-      properties:
-        plan:
-          type: string
-        limits:
-          $ref: '#/components/schemas/APIUsageLimits'
-        current_period_usage:
-          type: object
-          properties:
-            total_requests:
-              type: integer
-            total_api_rows_returned:
-              type: integer
   responses:
     Unauthorized:
       description: Missing or invalid API key.

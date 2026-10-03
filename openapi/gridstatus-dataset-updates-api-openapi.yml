@@ -37,6 +37,13 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
+    DatasetUpdatesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatasetUpdateResponse'
     DatasetUpdateResponse:
       type: object
       properties:
@@ -53,13 +60,6 @@ components:
           type: integer
         is_backfill:
           type: boolean
-    DatasetUpdatesResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/DatasetUpdateResponse'
   parameters:
     DatasetId:
       name: dataset_id
