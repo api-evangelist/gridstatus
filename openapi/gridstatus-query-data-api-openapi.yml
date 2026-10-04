@@ -223,24 +223,6 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  parameters:
-    DatasetId:
-      name: dataset_id
-      in: path
-      required: true
-      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
-      schema:
-        type: string
-    ReturnFormat:
-      name: return_format
-      in: query
-      description: The return format of the response.
-      schema:
-        type: string
-        enum:
-        - json
-        - csv
-        default: json
   responses:
     ValidationError:
       description: Validation error on request parameters.
@@ -266,31 +248,6 @@ components:
     TooManyRequests:
       description: Rate limit exceeded for your plan.
   schemas:
-    QueryDatasetResponse:
-      type: object
-      properties:
-        status_code:
-          type: integer
-        data:
-          type: array
-          description: Matching rows (array of objects by default).
-          items:
-            type: object
-        meta:
-          type: object
-          properties:
-            page:
-              type: integer
-            pageSize:
-              type: integer
-            hasNextPage:
-              type: boolean
-            cursor:
-              type:
-              - string
-              - 'null'
-        dataset_metadata:
-          $ref: '#/components/schemas/DatasetResponse'
     DatasetResponse:
       type: object
       properties:
@@ -353,6 +310,49 @@ components:
           type: string
         popularity_rank:
           type: integer
+    QueryDatasetResponse:
+      type: object
+      properties:
+        status_code:
+          type: integer
+        data:
+          type: array
+          description: Matching rows (array of objects by default).
+          items:
+            type: object
+        meta:
+          type: object
+          properties:
+            page:
+              type: integer
+            pageSize:
+              type: integer
+            hasNextPage:
+              type: boolean
+            cursor:
+              type:
+              - string
+              - 'null'
+        dataset_metadata:
+          $ref: '#/components/schemas/DatasetResponse'
+  parameters:
+    ReturnFormat:
+      name: return_format
+      in: query
+      description: The return format of the response.
+      schema:
+        type: string
+        enum:
+        - json
+        - csv
+        default: json
+    DatasetId:
+      name: dataset_id
+      in: path
+      required: true
+      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
+      schema:
+        type: string
   securitySchemes:
     apiKeyHeader:
       type: apiKey

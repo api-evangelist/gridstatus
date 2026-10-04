@@ -36,6 +36,25 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: Missing API Key.
+  parameters:
+    DatasetId:
+      name: dataset_id
+      in: path
+      required: true
+      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
+      schema:
+        type: string
   schemas:
     DatasetUpdatesResponse:
       type: object
@@ -60,25 +79,6 @@ components:
           type: integer
         is_backfill:
           type: boolean
-  parameters:
-    DatasetId:
-      name: dataset_id
-      in: path
-      required: true
-      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
-      schema:
-        type: string
-  responses:
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: Missing API Key.
   securitySchemes:
     apiKeyHeader:
       type: apiKey

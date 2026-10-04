@@ -196,14 +196,6 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  parameters:
-    ConstraintId:
-      name: constraint_id
-      in: path
-      required: true
-      description: ID of the constraint.
-      schema:
-        type: string
   responses:
     Unauthorized:
       description: Missing or invalid API key.
@@ -215,6 +207,14 @@ components:
               detail:
                 type: string
                 example: Missing API Key.
+  parameters:
+    ConstraintId:
+      name: constraint_id
+      in: path
+      required: true
+      description: ID of the constraint.
+      schema:
+        type: string
   securitySchemes:
     apiKeyHeader:
       type: apiKey
