@@ -56,19 +56,6 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: Missing API Key.
   parameters:
     DatasetId:
       name: dataset_id
@@ -87,7 +74,27 @@ components:
         - json
         - csv
         default: json
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: Missing API Key.
   schemas:
+    ListDatasetsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatasetResponse'
     DatasetResponse:
       type: object
       properties:
@@ -150,13 +157,6 @@ components:
           type: string
         popularity_rank:
           type: integer
-    ListDatasetsResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/DatasetResponse'
   securitySchemes:
     apiKeyHeader:
       type: apiKey

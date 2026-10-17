@@ -44,17 +44,6 @@ paths:
         '403':
           description: Requires a paid Grid Status plan.
 components:
-  responses:
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: Missing API Key.
   parameters:
     Iso:
       name: iso
@@ -72,6 +61,17 @@ components:
         - NYISO
         - PJM
         - SPP
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: Missing API Key.
   securitySchemes:
     apiKeyHeader:
       type: apiKey

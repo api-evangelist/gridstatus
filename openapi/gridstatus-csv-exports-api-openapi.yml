@@ -63,13 +63,28 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  parameters:
+    DatasetId:
+      name: dataset_id
+      in: path
+      required: true
+      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
+      schema:
+        type: string
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: Missing API Key.
   schemas:
-    PresignedUrlResponse:
-      type: object
-      properties:
-        url:
-          type: string
-          description: Presigned S3 URL for downloading the export file.
     DatasetExportsListResponse:
       type: object
       properties:
@@ -86,27 +101,12 @@ components:
               last_modified_utc:
                 type: string
                 format: date-time
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: Missing API Key.
-  parameters:
-    DatasetId:
-      name: dataset_id
-      in: path
-      required: true
-      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
-      schema:
-        type: string
+    PresignedUrlResponse:
+      type: object
+      properties:
+        url:
+          type: string
+          description: Presigned S3 URL for downloading the export file.
   securitySchemes:
     apiKeyHeader:
       type: apiKey

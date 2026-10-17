@@ -34,32 +34,7 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  responses:
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: Missing API Key.
   schemas:
-    APIUsageResponse:
-      type: object
-      properties:
-        plan:
-          type: string
-        limits:
-          $ref: '#/components/schemas/APIUsageLimits'
-        current_period_usage:
-          type: object
-          properties:
-            total_requests:
-              type: integer
-            total_api_rows_returned:
-              type: integer
     APIUsageLimits:
       type: object
       properties:
@@ -75,6 +50,31 @@ components:
           type: integer
         per_hour_api_rate_limit:
           type: integer
+    APIUsageResponse:
+      type: object
+      properties:
+        plan:
+          type: string
+        limits:
+          $ref: '#/components/schemas/APIUsageLimits'
+        current_period_usage:
+          type: object
+          properties:
+            total_requests:
+              type: integer
+            total_api_rows_returned:
+              type: integer
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: Missing API Key.
   securitySchemes:
     apiKeyHeader:
       type: apiKey
