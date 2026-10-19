@@ -1,228 +1,2490 @@
 openapi: 3.2.0
 info:
   title: Grid Status Constraints API
-  description: The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP.
   version: 1.3.0
-  contact:
-    name: Grid Status
-    url: https://www.gridstatus.io
-    email: contact@gridstatus.io
 servers:
 - url: https://api.gridstatus.io/v1
-  description: Grid Status hosted API
-security:
-- apiKeyHeader: []
-- apiKeyQuery: []
 tags:
 - name: Constraints
-  description: Transmission constraints, binding activity, and shift factors.
 paths:
   /constraints:
     get:
-      operationId: listConstraints
       tags:
       - Constraints
-      summary: List constraints
-      description: List transmission constraints.
+      summary: List Constraints
+      description: 'Get a list of constraints with optional filtering by ISOs and a search term.
+
+
+        Returns constraints where market_id matches an item in the comma-separated
+
+        isos list and constraint_name contains the search term. When sort_order is
+
+        not specified and there is a search term, results are sorted by relevance
+
+        (shorter constraint_names first). When sort_order is not specified, there is no
+
+        search term, and include_absolute_costs is false, results are sorted by
+
+        latest_seen_utc descending (most recently seen first), then market_id ascending,
+
+        then constraint_name ascending. When include_absolute_costs is true and there is
+
+        no search term, results are sorted by rt_absolute_cost descending with nulls last.
+
+
+        Use include_absolute_costs, include_timestamps, and include_dataset_metadata to opt
+
+        into rt_absolute_cost/da_absolute_cost, GS timestamps, and pricing dataset metadata.'
+      operationId: list_constraints_v1_constraints_get
+      parameters:
+      - name: include_absolute_costs
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: When true, include rt_absolute_cost and da_absolute_cost on each constraint. Uses absolute_cost_start_time and absolute_cost_end_time when provided.
+          default: false
+          title: Include Absolute Costs
+        description: When true, include rt_absolute_cost and da_absolute_cost on each constraint. Uses absolute_cost_start_time and absolute_cost_end_time when provided.
+      - name: include_timestamps
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: When true, include gs_created_at_utc and gs_updated_at_utc.
+          default: false
+          title: Include Timestamps
+        description: When true, include gs_created_at_utc and gs_updated_at_utc.
+      - name: include_dataset_metadata
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: When true, include dataset_metadata with pricing dataset specs.
+          default: false
+          title: Include Dataset Metadata
+        description: When true, include dataset_metadata with pricing dataset specs.
+      - name: absolute_cost_start_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Optional lower bound for the absolute cost window. When set, include rows where time index >= absolute_cost_start_time. Only used when include_absolute_costs is true.
+          title: Absolute Cost Start Time
+        description: Optional lower bound for the absolute cost window. When set, include rows where time index >= absolute_cost_start_time. Only used when include_absolute_costs is true.
+      - name: absolute_cost_end_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Optional upper bound for the absolute cost window. When set, include rows where time index < absolute_cost_end_time. Only used when include_absolute_costs is true.
+          title: Absolute Cost End Time
+        description: Optional upper bound for the absolute cost window. When set, include rows where time index < absolute_cost_end_time. Only used when include_absolute_costs is true.
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: isos
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Comma-separated list of market IDs to filter by
+          title: Isos
+        description: Comma-separated list of market IDs to filter by
+      - name: active_after
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter latest_seen_utc to be on or after this timestamp
+          title: Active After
+        description: Filter latest_seen_utc to be on or after this timestamp
+      - name: limit
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+            maximum: 100000
+            minimum: 0
+          - type: 'null'
+          description: 'Maximum number of results to return (default: 10000)'
+          default: 10000
+          title: Limit
+        description: 'Maximum number of results to return (default: 10000)'
+      - name: sort_order
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/OrderBy'
+          - type: 'null'
+          description: 'Sort order: asc or desc. Defaults to desc when omitted.'
+          title: Sort Order
+        description: 'Sort order: asc or desc. Defaults to desc when omitted.'
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional search term to filter by constraint_name
+          title: Search
+        description: Optional search term to filter by constraint_name
+      - name: sort_column
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - enum:
+            - constraint_name
+            - market_id
+            - earliest_seen_utc
+            - latest_seen_utc
+            type: string
+          - type: 'null'
+          description: 'Column to sort by. Must be one of: constraint_name, market_id, earliest_seen_utc, latest_seen_utc'
+          title: Sort Column
+        description: 'Column to sort by. Must be one of: constraint_name, market_id, earliest_seen_utc, latest_seen_utc'
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
       responses:
         '200':
-          description: A list of constraints.
+          description: Successful Response
           content:
             application/json:
               schema:
-                type: object
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                $ref: '#/components/schemas/ConstraintsListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /constraints/contingencies:
     get:
-      operationId: listContingencies
       tags:
       - Constraints
-      summary: List contingencies
-      description: List contingencies across constraints.
-      responses:
-        '200':
-          description: A list of contingencies.
-          content:
-            application/json:
-              schema:
-                type: object
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /constraints/binding:
-    get:
-      operationId: listConstraintBindingRows
-      tags:
-      - Constraints
-      summary: List constraint binding rows
-      description: List rows for intervals where constraints were binding.
-      responses:
-        '200':
-          description: Constraint binding rows.
-          content:
-            application/json:
-              schema:
-                type: object
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /constraints/binding/counts:
-    get:
-      operationId: listConstraintBindingCounts
-      tags:
-      - Constraints
-      summary: List constraint binding counts by period
-      description: Counts of binding intervals per constraint, grouped by period.
-      responses:
-        '200':
-          description: Binding counts by period.
-          content:
-            application/json:
-              schema:
-                type: object
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /constraints/binding/costs:
-    get:
-      operationId: listConstraintBindingCosts
-      tags:
-      - Constraints
-      summary: List constraint binding costs by period
-      description: Congestion costs attributed to binding constraints, grouped by period.
-      responses:
-        '200':
-          description: Binding costs by period.
-          content:
-            application/json:
-              schema:
-                type: object
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /constraints/binding/heat_map:
-    get:
-      operationId: getConstraintBindingHeatMap
-      tags:
-      - Constraints
-      summary: Get constraint binding heat map
-      description: Heat map of constraint binding activity.
-      responses:
-        '200':
-          description: Constraint binding heat map cells.
-          content:
-            application/json:
-              schema:
-                type: object
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /constraints/{gs_entity_id}:
-    get:
-      operationId: getConstraint
-      tags:
-      - Constraints
-      summary: Get constraint
-      description: Fetch a single constraint by Grid Status entity ID.
+      summary: List Contingencies
+      description: 'Get a list of contingencies with optional filtering by ISOs and a search term.
+
+
+        Returns all rows and columns from the contingencies table where market_id
+
+        matches an item in the comma-separated isos list and contingency_name
+
+        contains the search term. When sort_order is not specified and there is a
+
+        search term, results are sorted by relevance (shorter contingency_names
+
+        first). When sort_order is not specified and there is no search term,
+
+        results are sorted by latest_seen_utc descending (most recently seen first),
+
+        then market_id ascending, then contingency_name ascending for consistent
+
+        ordering.
+
+
+        Args:
+
+        params: Query parameters (isos, search, active_after, limit,
+
+        sort_column, sort_order)'
+      operationId: list_contingencies_v1_constraints_contingencies_get
       parameters:
-      - name: gs_entity_id
-        in: path
-        required: true
-        description: Grid Status entity ID of the constraint.
+      - name: api_key
+        in: query
+        required: false
         schema:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: isos
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Comma-separated list of market IDs to filter by
+          title: Isos
+        description: Comma-separated list of market IDs to filter by
+      - name: active_after
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter latest_seen_utc to be on or after this timestamp
+          title: Active After
+        description: Filter latest_seen_utc to be on or after this timestamp
+      - name: limit
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+            maximum: 100000
+            minimum: 0
+          - type: 'null'
+          description: 'Maximum number of results to return (default: 10000)'
+          default: 10000
+          title: Limit
+        description: 'Maximum number of results to return (default: 10000)'
+      - name: sort_order
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/OrderBy'
+          - type: 'null'
+          description: 'Sort order: asc or desc. Defaults to desc when omitted.'
+          title: Sort Order
+        description: 'Sort order: asc or desc. Defaults to desc when omitted.'
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional search term to filter by contingency_name
+          title: Search
+        description: Optional search term to filter by contingency_name
+      - name: sort_column
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - enum:
+            - contingency_name
+            - market_id
+            - earliest_seen_utc
+            - latest_seen_utc
+            type: string
+          - type: 'null'
+          description: 'Column to sort by. Must be one of: contingency_name, market_id, earliest_seen_utc, latest_seen_utc'
+          title: Sort Column
+        description: 'Column to sort by. Must be one of: contingency_name, market_id, earliest_seen_utc, latest_seen_utc'
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
       responses:
         '200':
-          description: The constraint.
+          description: Successful Response
           content:
             application/json:
               schema:
-                type: object
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /constraints/{constraint_id}/shift-factors:
-    get:
-      operationId: listShiftFactors
-      tags:
-      - Constraints
-      summary: List shift factors for a constraint
-      description: Shift factors for a constraint across pricing locations.
-      parameters:
-      - $ref: '#/components/parameters/ConstraintId'
-      responses:
-        '200':
-          description: Shift factors for the constraint.
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContingencyListResponse'
+                title: Response List Contingencies V1 Constraints Contingencies Get
+        '422':
+          description: Validation Error
           content:
             application/json:
               schema:
-                type: object
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /constraints/{constraint_id}/stats:
-    get:
-      operationId: listConstraintStats
-      tags:
-      - Constraints
-      summary: List constraint stats by interval
-      description: Statistics for a constraint by interval.
-      parameters:
-      - $ref: '#/components/parameters/ConstraintId'
-      responses:
-        '200':
-          description: Constraint statistics by interval.
-          content:
-            application/json:
-              schema:
-                type: object
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                $ref: '#/components/schemas/HTTPValidationError'
   /constraints/locations/{location_gs_entity_id}/shift-factors:
     get:
-      operationId: listShiftFactorsForLocation
       tags:
       - Constraints
-      summary: List shift factors for a location
-      description: Shift factors at a pricing location across constraints.
+      summary: List Shift Factors For Location
+      description: 'Retrieve estimated shift factors for a pricing location.
+
+
+        Queries ClickHouse ``linear_estimated_shift_factors`` for the given
+
+        location, returning one row per ``constraint_gs_entity_id``. When multiple
+
+        source rows share the same constraint, ``estimated_shift_factor`` is
+
+        aggregated per ``aggregation_function`` (mean, max, min, or median).
+
+        Optional ``contingency_id`` restricts rows to a single contingency.
+
+        Optional ``dataset_id`` filters on ``source_dataset``.
+
+        When ``exclude_zeros`` is true, source rows with ``estimated_shift_factor``
+
+        equal to zero are dropped before aggregating per constraint.'
+      operationId: list_shift_factors_for_location_v1_constraints_locations__location_gs_entity_id__shift_factors_get
       parameters:
       - name: location_gs_entity_id
         in: path
         required: true
-        description: Grid Status entity ID of the pricing location.
         schema:
           type: string
+          title: Location Gs Entity Id
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: contingency_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Contingency ID
+          description: When set, only include rows with this contingency_gs_entity_id
+        description: When set, only include rows with this contingency_gs_entity_id
+      - name: dataset_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dataset ID
+          description: When set, only include rows with this source_dataset
+        description: When set, only include rows with this source_dataset
+      - name: exclude_zeros
+        in: query
+        required: false
+        schema:
+          type: boolean
+          title: Exclude zeros
+          description: When true, exclude rows where estimated_shift_factor is zero before aggregating each group
+          default: false
+        description: When true, exclude rows where estimated_shift_factor is zero before aggregating each group
+      - name: aggregation_function
+        in: query
+        required: false
+        schema:
+          enum:
+          - mean
+          - max
+          - min
+          - median
+          type: string
+          title: Aggregation function
+          description: 'Function used to combine source rows in each group: mean, max, min, or median'
+          default: mean
+        description: 'Function used to combine source rows in each group: mean, max, min, or median'
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
       responses:
         '200':
-          description: Shift factors for the location.
+          description: Successful Response
           content:
             application/json:
               schema:
-                type: object
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                type: array
+                items:
+                  $ref: '#/components/schemas/ShiftFactorConstraintResponse'
+                title: Response List Shift Factors For Location V1 Constraints Locations  Location Gs Entity Id  Shift Factors Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /constraints/locations/{location_gs_entity_id}/constraint-costs:
+    get:
+      tags:
+      - Constraints
+      summary: List Constraint Costs For Location
+      description: 'Get location-adjusted constraint costs over a time range.
+
+
+        The endpoint computes absolute cost per constraint/contingency pair from the
+
+        specified constraint dataset in ClickHouse, then multiplies each by the
+
+        location''s aggregated shift factor (mean) from
+
+        ``linear_estimated_shift_factors`` for the same dataset.
+
+        For datasets without ``contingency_gs_entity_id``, costs are computed per
+
+        constraint and reused across that constraint''s shift-factor contingency rows.
+
+
+        Pass ``group_by=constraint`` to roll contingency-grained rows up to one row
+
+        per constraint (sum of ``adjusted_cost``, mean ``shift_factor``; contingency
+
+        fields are null). ``absolute_cost`` is summed when the dataset has a
+
+        contingency column; otherwise the shared per-constraint cost is kept once.'
+      operationId: list_constraint_costs_for_location_v1_constraints_locations__location_gs_entity_id__constraint_costs_get
+      parameters:
+      - name: location_gs_entity_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Location Gs Entity Id
+      - name: dataset_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Dataset Id
+      - name: start_time
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: Filter to rows where time index >= start_time (ISO 8601)
+          title: Start Time
+        description: Filter to rows where time index >= start_time (ISO 8601)
+      - name: end_time
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: Filter to rows where time index < end_time (ISO 8601)
+          title: End Time
+        description: Filter to rows where time index < end_time (ISO 8601)
+      - name: group_by
+        in: query
+        required: false
+        schema:
+          enum:
+          - constraint
+          - constraint_contingency
+          type: string
+          description: Row grain. `constraint_contingency` (default) returns one row per constraint/contingency pair. `constraint` rolls those rows up to one row per constraint (sum of adjusted_cost, mean shift factor; absolute_cost summed only when the dataset has a contingency column).
+          default: constraint_contingency
+          title: Group By
+        description: Row grain. `constraint_contingency` (default) returns one row per constraint/contingency pair. `constraint` rolls those rows up to one row per constraint (sum of adjusted_cost, mean shift factor; absolute_cost summed only when the dataset has a contingency column).
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LocationConstraintCostResponse'
+                title: Response List Constraint Costs For Location V1 Constraints Locations  Location Gs Entity Id  Constraint Costs Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /constraints/{constraint_id}/shift-factors:
+    get:
+      tags:
+      - Constraints
+      summary: List Shift Factors
+      description: 'Retrieve estimated shift factors for a constraint.
+
+
+        Queries ClickHouse ``linear_estimated_shift_factors`` for the given
+
+        constraint, returning one row per ``location_gs_entity_id``. When multiple
+
+        source rows share the same location, ``estimated_shift_factor`` is
+
+        aggregated per ``aggregation_function`` (mean, max, min, or median).
+
+        Optional ``contingency_id`` restricts rows to a single contingency.
+
+        Optional ``dataset_id`` filters on ``source_dataset``.
+
+        When ``exclude_zeros`` is true, source rows with ``estimated_shift_factor``
+
+        equal to zero are dropped before aggregating per location.'
+      operationId: list_shift_factors_v1_constraints__constraint_id__shift_factors_get
+      parameters:
+      - name: constraint_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Constraint ID
+          description: GS entity ID of the constraint to get shift factors for
+        description: GS entity ID of the constraint to get shift factors for
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: contingency_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Contingency ID
+          description: When set, only include rows with this contingency_gs_entity_id
+        description: When set, only include rows with this contingency_gs_entity_id
+      - name: dataset_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dataset ID
+          description: When set, only include rows with this source_dataset
+        description: When set, only include rows with this source_dataset
+      - name: exclude_zeros
+        in: query
+        required: false
+        schema:
+          type: boolean
+          title: Exclude zeros
+          description: When true, exclude rows where estimated_shift_factor is zero before aggregating each group
+          default: false
+        description: When true, exclude rows where estimated_shift_factor is zero before aggregating each group
+      - name: aggregation_function
+        in: query
+        required: false
+        schema:
+          enum:
+          - mean
+          - max
+          - min
+          - median
+          type: string
+          title: Aggregation function
+          description: 'Function used to combine source rows in each group: mean, max, min, or median'
+          default: mean
+        description: 'Function used to combine source rows in each group: mean, max, min, or median'
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ShiftFactorLocationResponse'
+                title: Response List Shift Factors V1 Constraints  Constraint Id  Shift Factors Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /constraints/{constraint_id}/location:
+    get:
+      tags:
+      - Constraints
+      summary: Get Constraint Location
+      description: 'Retrieve start/end substation coordinates for a constraint.
+
+
+        Returns nullable ``start`` and ``end`` lat/lon from the market''s constraint
+
+        geometry table. Markets without a geometry table return 400. Unknown constraint
+
+        ids return 404.'
+      operationId: get_constraint_location_v1_constraints__constraint_id__location_get
+      parameters:
+      - name: constraint_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Constraint ID
+          description: GS entity ID of the constraint to get facility location for
+        description: GS entity ID of the constraint to get facility location for
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConstraintLocationResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /constraints/binding:
+    get:
+      tags:
+      - Constraints
+      summary: List Constraint Binding Rows
+      description: Get binding rows for a dataset with constraint display names.
+      operationId: list_constraint_binding_rows_v1_constraints_binding_get
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100000
+          minimum: 1
+          description: Maximum number of rows to return.
+          default: 50000
+          title: Limit
+        description: Maximum number of rows to return.
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: dataset_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Dataset Id
+      - name: start_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter to rows where time index >= start_time (ISO 8601)
+          title: Start Time
+        description: Filter to rows where time index >= start_time (ISO 8601)
+      - name: end_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter to rows where time index < end_time (ISO 8601 timestamp)
+          title: End Time
+        description: Filter to rows where time index < end_time (ISO 8601 timestamp)
+      - name: price_threshold
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          description: Optional threshold. When set, only include rows where ABS(configured shadow price column) > price_threshold.
+          title: Price Threshold
+        description: Optional threshold. When set, only include rows where ABS(configured shadow price column) > price_threshold.
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+                title: Response List Constraint Binding Rows V1 Constraints Binding Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /constraints/binding/locations:
+    get:
+      tags:
+      - Constraints
+      summary: List Binding Constraints With Locations
+      description: 'Get unique binding constraints for a dataset/time window with locations.
+
+
+        Scans binding observations for ``dataset_id`` in ``[start_time, end_time)``,
+
+        collapses peak-|shadow| per (constraint, interval), keeps the top
+
+        ``limit`` constraints by peak |shadow|, joins facility coordinates and
+
+        contingency identity/names, and returns one object per constraint with
+
+        nested observations, ordered by that ranking.'
+      operationId: list_binding_constraints_with_locations_v1_constraints_binding_locations_get
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100000
+          minimum: 1
+          description: Maximum number of unique binding constraints to return (all intervals for each are included).
+          default: 50000
+          title: Limit
+        description: Maximum number of unique binding constraints to return (all intervals for each are included).
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: dataset_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Dataset Id
+      - name: start_time
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: Filter to rows where time index >= start_time (ISO 8601)
+          title: Start Time
+        description: Filter to rows where time index >= start_time (ISO 8601)
+      - name: end_time
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: Filter to rows where time index < end_time (ISO 8601 timestamp)
+          title: End Time
+        description: Filter to rows where time index < end_time (ISO 8601 timestamp)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BindingConstraintsWithLocationsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /constraints/{constraint_id}/binding_intervals_by_hour:
+    get:
+      tags:
+      - Constraints
+      summary: List Constraint Binding Intervals By Hour
+      description: Get filtered binding interval counts grouped by hour-of-day.
+      operationId: list_constraint_binding_intervals_by_hour_v1_constraints__constraint_id__binding_intervals_by_hour_get
+      parameters:
+      - name: constraint_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Constraint ID
+          description: GS entity ID of the constraint to query
+        description: GS entity ID of the constraint to query
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: dataset_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Dataset Id
+      - name: timezone
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional IANA timezone (e.g. America/New_York). When provided, buckets are computed in this timezone.
+          title: Timezone
+        description: Optional IANA timezone (e.g. America/New_York). When provided, buckets are computed in this timezone.
+      - name: start_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter to rows where time index >= start_time (ISO 8601)
+          title: Start Time
+        description: Filter to rows where time index >= start_time (ISO 8601)
+      - name: end_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter to rows where time index < end_time (ISO 8601)
+          title: End Time
+        description: Filter to rows where time index < end_time (ISO 8601)
+      - name: price_threshold
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          description: Optional threshold. When set, only include rows where ABS(configured shadow price column) > price_threshold.
+          title: Price Threshold
+        description: Optional threshold. When set, only include rows where ABS(configured shadow price column) > price_threshold.
+      - name: contingency_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional contingency GS entity ID filter.
+          title: Contingency Id
+        description: Optional contingency GS entity ID filter.
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConstraintBindingHourCountResponse'
+                title: Response List Constraint Binding Intervals By Hour V1 Constraints  Constraint Id  Binding Intervals By Hour Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /constraints/{constraint_id}/stats:
+    get:
+      tags:
+      - Constraints
+      summary: List Constraint Stats By Interval
+      description: Get per-interval count, shadow-price summary stats, and absolute cost.
+      operationId: list_constraint_stats_by_interval_v1_constraints__constraint_id__stats_get
+      parameters:
+      - name: constraint_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Constraint ID
+          description: GS entity ID of the constraint to query
+        description: GS entity ID of the constraint to query
+      - name: aggregation_period
+        in: query
+        required: true
+        schema:
+          enum:
+          - hour
+          - day
+          - month
+          - year
+          type: string
+          description: Aggregation bucket size. One of "hour", "day", "month", "year".
+          title: Aggregation Period
+        description: Aggregation bucket size. One of "hour", "day", "month", "year".
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: dataset_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Dataset Id
+      - name: timezone
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional IANA timezone (e.g. America/New_York). When provided, buckets are computed in this timezone.
+          title: Timezone
+        description: Optional IANA timezone (e.g. America/New_York). When provided, buckets are computed in this timezone.
+      - name: start_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter to rows where time index >= start_time (ISO 8601)
+          title: Start Time
+        description: Filter to rows where time index >= start_time (ISO 8601)
+      - name: end_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter to rows where time index < end_time (ISO 8601)
+          title: End Time
+        description: Filter to rows where time index < end_time (ISO 8601)
+      - name: price_threshold
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          description: Optional threshold. When set, only include rows where ABS(configured shadow price column) > price_threshold.
+          title: Price Threshold
+        description: Optional threshold. When set, only include rows where ABS(configured shadow price column) > price_threshold.
+      - name: contingency_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional contingency GS entity ID filter.
+          title: Contingency Id
+        description: Optional contingency GS entity ID filter.
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConstraintStatsIntervalResponse'
+                title: Response List Constraint Stats By Interval V1 Constraints  Constraint Id  Stats Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /constraints/binding/counts:
+    get:
+      tags:
+      - Constraints
+      summary: List Constraint Binding Counts By Period
+      description: Summarize unique binding constraints per UTC period for a dataset.
+      operationId: list_constraint_binding_counts_by_period_v1_constraints_binding_counts_get
+      parameters:
+      - name: aggregation_period
+        in: query
+        required: false
+        schema:
+          enum:
+          - hour
+          - day
+          - month
+          - year
+          type: string
+          description: 'UTC aggregation period for grouping counts. Supported values: hour, day, month, year.'
+          default: hour
+          title: Aggregation Period
+        description: 'UTC aggregation period for grouping counts. Supported values: hour, day, month, year.'
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: dataset_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Dataset Id
+      - name: start_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter to rows where time index >= start_time (ISO 8601)
+          title: Start Time
+        description: Filter to rows where time index >= start_time (ISO 8601)
+      - name: end_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter to rows where time index < end_time (ISO 8601 timestamp)
+          title: End Time
+        description: Filter to rows where time index < end_time (ISO 8601 timestamp)
+      - name: price_threshold
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          description: Optional threshold. When set, only include rows where ABS(configured shadow price column) > price_threshold.
+          title: Price Threshold
+        description: Optional threshold. When set, only include rows where ABS(configured shadow price column) > price_threshold.
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BindingConstraintCountResponse'
+                title: Response List Constraint Binding Counts By Period V1 Constraints Binding Counts Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /constraints/binding/absolute-costs:
+    get:
+      tags:
+      - Constraints
+      summary: List Constraint Binding Absolute Costs By Period
+      description: Summarize absolute binding cost per UTC period for a dataset.
+      operationId: list_constraint_binding_absolute_costs_by_period_v1_constraints_binding_absolute_costs_get
+      parameters:
+      - name: aggregation_period
+        in: query
+        required: false
+        schema:
+          enum:
+          - hour
+          - day
+          - month
+          - year
+          type: string
+          description: 'UTC aggregation period for grouping absolute costs. Supported values: hour, day, month, year.'
+          default: hour
+          title: Aggregation Period
+        description: 'UTC aggregation period for grouping absolute costs. Supported values: hour, day, month, year.'
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: dataset_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Dataset Id
+      - name: start_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter to rows where time index >= start_time (ISO 8601)
+          title: Start Time
+        description: Filter to rows where time index >= start_time (ISO 8601)
+      - name: end_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter to rows where time index < end_time (ISO 8601 timestamp)
+          title: End Time
+        description: Filter to rows where time index < end_time (ISO 8601 timestamp)
+      - name: price_threshold
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          description: Optional threshold. When set, only include rows where ABS(configured shadow price column) > price_threshold.
+          title: Price Threshold
+        description: Optional threshold. When set, only include rows where ABS(configured shadow price column) > price_threshold.
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BindingConstraintAbsoluteCostResponse'
+                title: Response List Constraint Binding Absolute Costs By Period V1 Constraints Binding Absolute Costs Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /constraints/binding/heat_map:
+    get:
+      tags:
+      - Constraints
+      summary: Get Constraint Binding Heat Map
+      description: Return absolute costs and shadow-price aggregates by bucket and constraint.
+      operationId: get_constraint_binding_heat_map_v1_constraints_binding_heat_map_get
+      parameters:
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: dataset_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Dataset Id
+      - name: start_time
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: Filter to rows where time index >= start_time (ISO 8601)
+          title: Start Time
+        description: Filter to rows where time index >= start_time (ISO 8601)
+      - name: end_time
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: Filter to rows where time index < end_time (ISO 8601 timestamp)
+          title: End Time
+        description: Filter to rows where time index < end_time (ISO 8601 timestamp)
+      - name: timezone
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional IANA timezone used for daily bucket boundaries. Defaults to the dataset market timezone.
+          title: Timezone
+        description: Optional IANA timezone used for daily bucket boundaries. Defaults to the dataset market timezone.
+      - name: bucket_mode
+        in: query
+        required: false
+        schema:
+          enum:
+          - auto
+          - raw
+          - hourly
+          - daily
+          type: string
+          description: Bucket resolution. Raw preserves the native interval; hourly and daily use explicit buckets. Auto derives resolution from the native interval and selected range. Explicit modes that exceed the range limit resolve to the nearest available mode.
+          default: auto
+          title: Bucket Mode
+        description: Bucket resolution. Raw preserves the native interval; hourly and daily use explicit buckets. Auto derives resolution from the native interval and selected range. Explicit modes that exceed the range limit resolve to the nearest available mode.
+      - name: group_by
+        in: query
+        required: false
+        schema:
+          enum:
+          - constraint
+          - constraint_contingency
+          type: string
+          description: Group rows by constraint and contingency by default, or by constraint only.
+          default: constraint_contingency
+          title: Group By
+        description: Group rows by constraint and contingency by default, or by constraint only.
+      - name: days_of_week
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional comma-separated market-local days of the week, where Monday is 1 and Sunday is 7. An empty value matches no rows.
+          title: Days Of Week
+        description: Optional comma-separated market-local days of the week, where Monday is 1 and Sunday is 7. An empty value matches no rows.
+      - name: hours
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional comma-separated market-local hour starts from 0 through 23. An empty value matches no rows.
+          title: Hours
+        description: Optional comma-separated market-local hour starts from 0 through 23. An empty value matches no rows.
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/ConstraintBindingHeatMapSupportedResponse'
+                - $ref: '#/components/schemas/ConstraintBindingHeatMapUnsupportedResponse'
+                title: Response Get Constraint Binding Heat Map V1 Constraints Binding Heat Map Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /constraints/{gs_entity_id}:
+    get:
+      tags:
+      - Constraints
+      summary: Get Constraint
+      description: Get data for a specific constraint by its GS entity ID.
+      operationId: get_constraint_v1_constraints__gs_entity_id__get
+      parameters:
+      - name: gs_entity_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: GS Entity ID
+          description: GS entity ID of the constraint to query
+        description: GS entity ID of the constraint to query
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConstraintResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /constraints/{constraint_id}/intervals:
+    get:
+      tags:
+      - Constraints
+      summary: Get Constraint Intervals
+      description: Year/month/day-level statistics on binding intervals in ISO local time.
+      operationId: get_constraint_intervals_v1_constraints__constraint_id__intervals_get
+      parameters:
+      - name: constraint_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Constraint ID
+          description: GS entity ID of the constraint to query
+        description: GS entity ID of the constraint to query
+      - name: dataset_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Dataset Id
+      - name: contingency_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Contingency ID
+          description: Optional contingency GS entity ID filter. Applied only when the dataset contains contingency_gs_entity_id.
+        description: Optional contingency GS entity ID filter. Applied only when the dataset contains contingency_gs_entity_id.
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConstraintIntervalResponse'
+                title: Response Get Constraint Intervals V1 Constraints  Constraint Id  Intervals Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /constraints/{constraint_id}/contingencies:
+    get:
+      tags:
+      - Constraints
+      summary: List Contingencies For Constraint
+      description: Contingencies binding for a constraint in a dataset/time window.
+      operationId: list_contingencies_for_constraint_v1_constraints__constraint_id__contingencies_get
+      parameters:
+      - name: constraint_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Constraint ID
+          description: Constraint GS entity ID to filter by (constraint_gs_entity_id)
+        description: Constraint GS entity ID to filter by (constraint_gs_entity_id)
+      - name: dataset_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Dataset Id
+      - name: include_binding_stats
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: When true, include binding_intervals and absolute_cost and apply start_time/end_time/time filters. Default returns id and name only.
+          default: false
+          title: Include Binding Stats
+        description: When true, include binding_intervals and absolute_cost and apply start_time/end_time/time filters. Default returns id and name only.
+      - name: start_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Start time (ISO timestamp) for filtering (inclusive). Requires time index column. Only used when include_binding_stats is true.
+          title: Start Time
+        description: Start time (ISO timestamp) for filtering (inclusive). Requires time index column. Only used when include_binding_stats is true.
+      - name: end_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: End time (ISO timestamp) for filtering (exclusive). Requires time index column. Only used when include_binding_stats is true.
+          title: End Time
+        description: End time (ISO timestamp) for filtering (exclusive). Requires time index column. Only used when include_binding_stats is true.
+      - name: time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional specific timestamp to filter results. Cannot be used with start_time or end_time. Only used when include_binding_stats is true.
+          title: Time
+        description: Optional specific timestamp to filter results. Cannot be used with start_time or end_time. Only used when include_binding_stats is true.
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContingencyResponse'
+                title: Response List Contingencies For Constraint V1 Constraints  Constraint Id  Contingencies Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
-  parameters:
-    ConstraintId:
-      name: constraint_id
-      in: path
-      required: true
-      description: ID of the constraint.
-      schema:
-        type: string
-  responses:
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
+  schemas:
+    ConstraintIntervalResponse:
+      properties:
+        year:
+          type: integer
+          title: Year
+        count:
+          type: integer
+          title: Count
+        months:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ConstraintIntervalMonthResponse'
+            type: array
+          - type: 'null'
+          title: Months
+      type: object
+      required:
+      - year
+      - count
+      title: ConstraintIntervalResponse
+      description: 'Year/month/day-level statistics for constraint binding intervals.
+
+
+        Year/month/day grouping uses the market''s local calendar.
+
+        Year: months with data and count in each.
+
+        Month: days with data and count in each.
+
+        Day: canonical UTC timestamps (YYYY-MM-DDTHH:MM:SSZ) for unique intervals.'
+    ConstraintBindingHeatMapRowSummaryResponse:
+      properties:
+        constraint_gs_entity_id:
+          type: string
+          title: Constraint Gs Entity Id
+        contingency_gs_entity_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Contingency Gs Entity Id
+        metrics:
+          $ref: '#/components/schemas/ConstraintBindingHeatMapMetrics'
+      type: object
+      required:
+      - constraint_gs_entity_id
+      - metrics
+      title: ConstraintBindingHeatMapRowSummaryResponse
+    ShiftFactorLocationResponse:
+      properties:
+        location_gs_entity_id:
+          type: string
+          title: Location Gs Entity Id
+        estimated_shift_factor:
+          type: number
+          title: Estimated Shift Factor
+        location:
+          type: string
+          title: Location
+      type: object
+      required:
+      - location_gs_entity_id
+      - estimated_shift_factor
+      - location
+      title: ShiftFactorLocationResponse
+      description: Linear estimated shift factor aggregated per location for a constraint.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ConstraintResponse:
+      properties:
+        gs_entity_id:
+          type: string
+          title: Gs Entity Id
+        constraint_name:
+          type: string
+          title: Constraint Name
+        market_id:
+          type: string
+          title: Market Id
+        earliest_seen_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Earliest Seen Utc
+        latest_seen_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Latest Seen Utc
+        available_datasets:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Available Datasets
+        rt_absolute_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Rt Absolute Cost
+        da_absolute_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Da Absolute Cost
+        gs_created_at_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Gs Created At Utc
+        gs_updated_at_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Gs Updated At Utc
+      type: object
+      required:
+      - gs_entity_id
+      - constraint_name
+      - market_id
+      - earliest_seen_utc
+      - latest_seen_utc
+      - available_datasets
+      title: ConstraintResponse
+    BindingConstraintAbsoluteCostResponse:
+      properties:
+        period_start_utc:
+          type: string
+          format: date-time
+          title: Period Start Utc
+        absolute_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Absolute Cost
+      type: object
+      required:
+      - period_start_utc
+      - absolute_cost
+      title: BindingConstraintAbsoluteCostResponse
+      description: Absolute binding cost for a single UTC aggregation period.
+    ConstraintBindingHourCountResponse:
+      properties:
+        hour:
+          type: integer
+          title: Hour
+        count:
+          type: integer
+          title: Count
+      type: object
+      required:
+      - hour
+      - count
+      title: ConstraintBindingHourCountResponse
+      description: Count of filtered binding rows by local hour (requested timezone or UTC).
+    BindingConstraintObservation:
+      properties:
+        interval_start_utc:
+          type: string
+          format: date-time
+          title: Interval Start Utc
+        shadow_price:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Shadow Price
+        contingency_gs_entity_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Contingency Gs Entity Id
+        contingency_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Contingency Name
+      type: object
+      required:
+      - interval_start_utc
+      title: BindingConstraintObservation
+      description: One binding observation for a constraint in the query window.
+    ConstraintIntervalMonthResponse:
+      properties:
+        month:
+          type: integer
+          title: Month
+        count:
+          type: integer
+          title: Count
+        days:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ConstraintIntervalDayResponse'
+            type: array
+          - type: 'null'
+          title: Days
+      type: object
+      required:
+      - month
+      - count
+      title: ConstraintIntervalMonthResponse
+      description: Month-level count of unique timestamps within a year.
+    ConstraintBindingHeatMapCellResponse:
+      properties:
+        absolute_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Absolute Cost
+          description: 'Total absolute cost: the sum of duration-weighted absolute shadow prices, or null when any binding row has an unknown absolute cost.'
+        peak_shadow_price:
+          type: number
+          title: Peak Shadow Price
+          description: Signed shadow price with the greatest absolute value.
+        mean_shadow_price:
+          type: number
+          title: Mean Shadow Price
+          description: Mean shadow price.
+        binding_interval_count:
+          type: integer
+          title: Binding Interval Count
+          description: Number of underlying binding rows.
+        bucket_start_utc:
+          type: string
+          format: date-time
+          title: Bucket Start Utc
+        interval_start_utc:
+          type: string
+          format: date-time
+          title: Interval Start Utc
+          description: UTC timestamp of the shadow price with the greatest absolute value in the bucket. It may be an irregular dataset time index.
+        constraint_gs_entity_id:
+          type: string
+          title: Constraint Gs Entity Id
+        contingency_gs_entity_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Contingency Gs Entity Id
+      type: object
+      required:
+      - absolute_cost
+      - peak_shadow_price
+      - mean_shadow_price
+      - binding_interval_count
+      - bucket_start_utc
+      - interval_start_utc
+      - constraint_gs_entity_id
+      title: ConstraintBindingHeatMapCellResponse
+    ShiftFactorConstraintResponse:
+      properties:
+        constraint_gs_entity_id:
+          type: string
+          title: Constraint Gs Entity Id
+        estimated_shift_factor:
+          type: number
+          title: Estimated Shift Factor
+        constraint:
+          type: string
+          title: Constraint
+      type: object
+      required:
+      - constraint_gs_entity_id
+      - estimated_shift_factor
+      - constraint
+      title: ShiftFactorConstraintResponse
+      description: Linear estimated shift factor aggregated per constraint for a location.
+    ConstraintIntervalDayResponse:
+      properties:
+        day:
+          type: integer
+          title: Day
+        count:
+          type: integer
+          title: Count
+        times:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Times
+      type: object
+      required:
+      - day
+      - count
+      title: ConstraintIntervalDayResponse
+      description: Day-level count of unique timestamps within a month.
+    ContingencyListResponse:
+      properties:
+        gs_entity_id:
+          type: string
+          title: Gs Entity Id
+        contingency_name:
+          type: string
+          title: Contingency Name
+        market_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Market Id
+        earliest_seen_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Earliest Seen Utc
+        latest_seen_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Latest Seen Utc
+        available_datasets:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Available Datasets
+        gs_created_at_utc:
+          type: string
+          format: date-time
+          title: Gs Created At Utc
+        gs_updated_at_utc:
+          type: string
+          format: date-time
+          title: Gs Updated At Utc
+      type: object
+      required:
+      - gs_entity_id
+      - contingency_name
+      - market_id
+      - earliest_seen_utc
+      - latest_seen_utc
+      - available_datasets
+      - gs_created_at_utc
+      - gs_updated_at_utc
+      title: ContingencyListResponse
+    ConstraintBindingHeatMapUnsupportedResponse:
+      properties:
+        timezone:
+          type: string
+          title: Timezone
+        group_by:
+          type: string
+          enum:
+          - constraint
+          - constraint_contingency
+          title: Group By
+        supports_contingency_grouping:
+          type: boolean
+          title: Supports Contingency Grouping
+        constraint_names:
+          additionalProperties:
+            type: string
+          type: object
+          title: Constraint Names
+        contingency_names:
+          additionalProperties:
+            type: string
+          type: object
+          title: Contingency Names
+        native_interval_minutes:
+          type: 'null'
+          title: Native Interval Minutes
+        interval_minutes:
+          type: 'null'
+          title: Interval Minutes
+        bucket_mode:
+          type: 'null'
+          title: Bucket Mode
+        available_bucket_modes:
+          items:
+            type: string
+            enum:
+            - raw
+            - hourly
+            - daily
+          type: array
+          maxItems: 0
+          title: Available Bucket Modes
+        cells:
+          items:
+            $ref: '#/components/schemas/ConstraintBindingHeatMapCellResponse'
+          type: array
+          maxItems: 0
+          title: Cells
+        row_summaries:
+          items:
+            $ref: '#/components/schemas/ConstraintBindingHeatMapRowSummaryResponse'
+          type: array
+          maxItems: 0
+          title: Row Summaries
+        unsupported_reason:
+          type: string
+          title: Unsupported Reason
+      type: object
+      required:
+      - timezone
+      - group_by
+      - supports_contingency_grouping
+      - unsupported_reason
+      title: ConstraintBindingHeatMapUnsupportedResponse
+      description: Binding heat map metadata for a dataset that cannot be displayed.
+    ContingencyResponse:
+      properties:
+        id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Id
+        name:
+          type: string
+          title: Name
+        binding_intervals:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Binding Intervals
+        absolute_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Absolute Cost
+      type: object
+      required:
+      - id
+      - name
+      title: ContingencyResponse
+      description: Contingency with id, name, and optional binding stats.
+    ConstraintBindingHeatMapMetrics:
+      properties:
+        absolute_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Absolute Cost
+          description: 'Total absolute cost: the sum of duration-weighted absolute shadow prices, or null when any binding row has an unknown absolute cost.'
+        peak_shadow_price:
+          type: number
+          title: Peak Shadow Price
+          description: Signed shadow price with the greatest absolute value.
+        mean_shadow_price:
+          type: number
+          title: Mean Shadow Price
+          description: Mean shadow price.
+        binding_interval_count:
+          type: integer
+          title: Binding Interval Count
+          description: Number of underlying binding rows.
+      type: object
+      required:
+      - absolute_cost
+      - peak_shadow_price
+      - mean_shadow_price
+      - binding_interval_count
+      title: ConstraintBindingHeatMapMetrics
+    ConstraintStatsIntervalResponse:
+      properties:
+        interval_start_utc:
+          type: string
+          format: date-time
+          title: Interval Start Utc
+        binding_intervals:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Binding Intervals
+        shadow_price_min:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Shadow Price Min
+        shadow_price_mean:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Shadow Price Mean
+        shadow_price_median:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Shadow Price Median
+        shadow_price_max:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Shadow Price Max
+        absolute_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Absolute Cost
+      type: object
+      required:
+      - interval_start_utc
+      - binding_intervals
+      - shadow_price_min
+      - shadow_price_mean
+      - shadow_price_median
+      - shadow_price_max
+      - absolute_cost
+      title: ConstraintStatsIntervalResponse
+      description: Per-interval aggregate stats for filtered constraint rows.
+    BindingConstraintWithLocationResponse:
+      properties:
+        constraint_gs_entity_id:
+          type: string
+          title: Constraint Gs Entity Id
+        constraint_name:
+          type: string
+          title: Constraint Name
+        start:
+          anyOf:
+          - $ref: '#/components/schemas/SubstationLocation'
+          - type: 'null'
+        end:
+          anyOf:
+          - $ref: '#/components/schemas/SubstationLocation'
+          - type: 'null'
+        observations:
+          items:
+            $ref: '#/components/schemas/BindingConstraintObservation'
+          type: array
+          title: Observations
+      type: object
+      required:
+      - constraint_gs_entity_id
+      - constraint_name
+      - observations
+      title: BindingConstraintWithLocationResponse
+      description: 'A unique binding constraint with substation coords and interval observations.
+
+
+        ``observations`` lists every binding interval (and its shadow price) in the
+
+        query window so clients can filter to a single interval or day-peak price
+
+        without a second request.'
+    ConstraintBindingHeatMapSupportedResponse:
+      properties:
+        timezone:
+          type: string
+          title: Timezone
+        group_by:
+          type: string
+          enum:
+          - constraint
+          - constraint_contingency
+          title: Group By
+        supports_contingency_grouping:
+          type: boolean
+          title: Supports Contingency Grouping
+        constraint_names:
+          additionalProperties:
+            type: string
+          type: object
+          title: Constraint Names
+        contingency_names:
+          additionalProperties:
+            type: string
+          type: object
+          title: Contingency Names
+        native_interval_minutes:
+          type: integer
+          title: Native Interval Minutes
+        interval_minutes:
+          type: integer
+          title: Interval Minutes
+        bucket_mode:
+          type: string
+          enum:
+          - raw
+          - hourly
+          - daily
+          title: Bucket Mode
+        available_bucket_modes:
+          items:
+            type: string
+            enum:
+            - raw
+            - hourly
+            - daily
+          type: array
+          title: Available Bucket Modes
+          description: Bucket modes available for the native interval and range.
+        cells:
+          items:
+            $ref: '#/components/schemas/ConstraintBindingHeatMapCellResponse'
+          type: array
+          title: Cells
+        row_summaries:
+          items:
+            $ref: '#/components/schemas/ConstraintBindingHeatMapRowSummaryResponse'
+          type: array
+          title: Row Summaries
+        unsupported_reason:
+          type: 'null'
+          title: Unsupported Reason
+      type: object
+      required:
+      - timezone
+      - group_by
+      - supports_contingency_grouping
+      - native_interval_minutes
+      - interval_minutes
+      - bucket_mode
+      - available_bucket_modes
+      title: ConstraintBindingHeatMapSupportedResponse
+      description: Absolute binding cost and shadow-price aggregates for a supported dataset.
+    ConstraintPricingDatasetSpecResponse:
+      properties:
+        dataset_id:
+          type: string
+          title: Dataset Id
+        shadow_price_column:
+          type: string
+          title: Shadow Price Column
+      type: object
+      required:
+      - dataset_id
+      - shadow_price_column
+      title: ConstraintPricingDatasetSpecResponse
+    LocationConstraintCostResponse:
+      properties:
+        constraint_gs_entity_id:
+          type: string
+          title: Constraint Gs Entity Id
+        constraint_name:
+          type: string
+          title: Constraint Name
+        contingency_gs_entity_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Contingency Gs Entity Id
+        contingency_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Contingency Name
+        shift_factor:
+          type: number
+          title: Shift Factor
+        absolute_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Absolute Cost
+        adjusted_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Adjusted Cost
+      type: object
+      required:
+      - constraint_gs_entity_id
+      - constraint_name
+      - contingency_gs_entity_id
+      - contingency_name
+      - shift_factor
+      - absolute_cost
+      - adjusted_cost
+      title: LocationConstraintCostResponse
+      description: 'Constraint costs adjusted by a location''s shift factor.
+
+
+        Default grain is constraint + contingency. When the endpoint is called with
+
+        ``group_by=constraint``, contingency fields are null and costs/shift factors
+
+        are rolled up across contingencies for each constraint. ``adjusted_cost`` is
+
+        always summed; ``absolute_cost`` is summed only when the underlying dataset has
+
+        a contingency column (otherwise the shared per-constraint cost is kept once).'
+    OrderBy:
+      type: string
+      enum:
+      - asc
+      - desc
+      title: OrderBy
+    SubstationLocation:
+      properties:
+        latitude:
+          type: number
+          title: Latitude
+        longitude:
+          type: number
+          title: Longitude
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - latitude
+      - longitude
+      - name
+      title: SubstationLocation
+      description: Lat/lon and display name for a substation.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ConstraintLocationResponse:
+      properties:
+        constraint_gs_entity_id:
+          type: string
+          title: Constraint Gs Entity Id
+        constraint_name:
+          type: string
+          title: Constraint Name
+        start:
+          anyOf:
+          - $ref: '#/components/schemas/SubstationLocation'
+          - type: 'null'
+        end:
+          anyOf:
+          - $ref: '#/components/schemas/SubstationLocation'
+          - type: 'null'
+      type: object
+      required:
+      - constraint_gs_entity_id
+      - constraint_name
+      title: ConstraintLocationResponse
+      description: 'Start/end substation coordinates for a constraint.
+
+
+        Either endpoint may be null when that constraint has no mapped coords.
+
+        Markets without a geometry table are rejected by the endpoint (400).'
+    ConstraintsListResponse:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/ConstraintResponse'
+          type: array
+          title: Data
+        dataset_metadata:
+          anyOf:
+          - additionalProperties:
+              additionalProperties:
+                items:
+                  $ref: '#/components/schemas/ConstraintPricingDatasetSpecResponse'
+                type: array
+              type: object
             type: object
-            properties:
-              detail:
-                type: string
-                example: Missing API Key.
-  securitySchemes:
-    apiKeyHeader:
-      type: apiKey
-      in: header
-      name: x-api-key
-      description: API key from https://www.gridstatus.io/settings/api.
-    apiKeyQuery:
-      type: apiKey
-      in: query
-      name: api_key
-      description: API key passed as a query parameter (alternative to the header).
+          - type: 'null'
+          title: Dataset Metadata
+      type: object
+      required:
+      - data
+      title: ConstraintsListResponse
+    BindingConstraintsWithLocationsResponse:
+      properties:
+        constraints:
+          items:
+            $ref: '#/components/schemas/BindingConstraintWithLocationResponse'
+          type: array
+          title: Constraints
+      type: object
+      required:
+      - constraints
+      title: BindingConstraintsWithLocationsResponse
+      description: Binding constraints for a dataset/time window, merged with substations.
+    BindingConstraintCountResponse:
+      properties:
+        period_start_utc:
+          type: string
+          format: date-time
+          title: Period Start Utc
+        binding_constraint_count:
+          type: integer
+          title: Binding Constraint Count
+        binding_constraint_ids:
+          items:
+            type: string
+          type: array
+          title: Binding Constraint Ids
+      type: object
+      required:
+      - period_start_utc
+      - binding_constraint_count
+      - binding_constraint_ids
+      title: BindingConstraintCountResponse
+      description: Count of unique binding constraints for a single UTC aggregation period.
+externalDocs:
+  description: 'GridStatus documentation. Human docs: https://docs.gridstatus.io/developers. Ask a natural-language question (RAG search): append a URL-encoded question to https://docs.gridstatus.io/?ask='
+  url: https://docs.gridstatus.io/llms.txt
+x-tagGroups:
+- name: API Endpoints
+  tags:
+  - API Info
+  - Block Pricing Data
+  - Dataset Metadata
+  - Query Data
+  - Dataset Updates
+  - Reports
+x-rag-search:
+  description: Natural-language question answering over the GridStatus documentation. Substitute a URL-encoded question for {question}.
+  url_template: https://docs.gridstatus.io/?ask={question}
+  llms_txt: https://docs.gridstatus.io/llms.txt

@@ -1,170 +1,658 @@
 openapi: 3.2.0
 info:
   title: Grid Status Dataset Metadata API
-  description: The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP.
   version: 1.3.0
-  contact:
-    name: Grid Status
-    url: https://www.gridstatus.io
-    email: contact@gridstatus.io
 servers:
 - url: https://api.gridstatus.io/v1
-  description: Grid Status hosted API
-security:
-- apiKeyHeader: []
-- apiKeyQuery: []
 tags:
 - name: Dataset Metadata
-  description: List datasets and fetch per-dataset metadata.
 paths:
   /datasets:
     get:
-      operationId: listDatasets
       tags:
       - Dataset Metadata
-      summary: List datasets
-      description: List all published datasets the authenticated user has access to. The full catalog is browsable at https://www.gridstatus.io/datasets.
+      summary: List Datasets
+      description: 'List all published datasets a user has access to
+
+
+        See list of available datasets here: https://www.gridstatus.io/datasets'
+      operationId: list_datasets_v1_datasets_get
       parameters:
-      - $ref: '#/components/parameters/ReturnFormat'
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: return_format
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/ReturnFormat'
+          description: The return format of the response
+          default: json
+        description: The return format of the response
+      - name: download
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Whether to download the file or not
+          default: false
+          title: Download
+        description: Whether to download the file or not
+      - name: json_schema
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/JSONSchema'
+          description: The json schema of the response
+          default: array-of-objects
+        description: The json schema of the response
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
       responses:
         '200':
-          description: A list of datasets with metadata.
+          description: Successful response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ListDatasetsResponse'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+              example:
+                status_code: 200
+                data:
+                - id: caiso_as_prices
+                  name: CAISO AS Prices
+                  description: "Ancillary Services Prices as reported by CAISO.\n\n**AS Mapping**\n\nThe *_EXP show only the intertie resources.\n \n-    AS_SP26_P: Resources in AS_SP26\n-    AS_NP26_P: Resources in AS_NP26\n-    AS_SP15_P: Resources in AS_SP15\n-    AS_NP15_P: Resources in AS_NP15\n-    AS_SP26_EXP_P: Resources in AS_SP26_EXP which are not in AS_SP26\n-    AS_NP26_EXP_P: Resources in AS_NP26_EXP which are not in AS_NP26\n-    AS_SP15_EXP_P: Resources in AS_SP15_EXP which are not in AS_SP15\n-    AS_NP15_EXP_P: Resources in AS_NP15_EXP which are not in AS_NP15\n-    AS_CAISO_NP26_P: Resources in AS_CAISO which are not in AS_SP26\n-    AS_CAISO_SP26_P: Resources in AS_CAISO which are not in AS_NP26\n-    AS_CAISO_NP15_P: Resources in AS_CAISO which are not in AS_SP15\n-    AS_CAISO_SP15_P: Resources in AS_CAISO which are not in AS_NP15"
+                  earliest_available_time_utc: '2010-01-01T08:00:00+00:00'
+                  latest_available_time_utc: '2025-05-20T06:00:00+00:00'
+                  source: caiso
+                  last_checked_time_utc: '2025-05-19T19:10:58+00:00'
+                  primary_key_columns:
+                  - interval_start_utc
+                  - region
+                  - market
+                  time_index_column: interval_start_utc
+                  subseries_index_column: region
+                  all_columns:
+                  - name: interval_start_utc
+                    type: TIMESTAMP
+                    is_numeric: false
+                    is_date: false
+                    is_datetime: true
+                  - name: interval_end_utc
+                    type: TIMESTAMP
+                    is_numeric: false
+                    is_date: false
+                    is_datetime: true
+                  - name: region
+                    type: VARCHAR
+                    is_numeric: false
+                    is_date: false
+                    is_datetime: false
+                  - name: market
+                    type: VARCHAR
+                    is_numeric: false
+                    is_date: false
+                    is_datetime: false
+                  - name: non_spinning_reserves
+                    type: DOUBLE PRECISION
+                    is_numeric: true
+                    is_date: false
+                    is_datetime: false
+                  - name: regulation_down
+                    type: DOUBLE PRECISION
+                    is_numeric: true
+                    is_date: false
+                    is_datetime: false
+                  - name: regulation_mileage_down
+                    type: DOUBLE PRECISION
+                    is_numeric: true
+                    is_date: false
+                    is_datetime: false
+                  - name: regulation_mileage_up
+                    type: DOUBLE PRECISION
+                    is_numeric: true
+                    is_date: false
+                    is_datetime: false
+                  - name: regulation_up
+                    type: DOUBLE PRECISION
+                    is_numeric: true
+                    is_date: false
+                    is_datetime: false
+                  - name: spinning_reserves
+                    type: DOUBLE PRECISION
+                    is_numeric: true
+                    is_date: false
+                    is_datetime: false
+                  number_of_rows_approximate: 621445
+                  table_type: table
+                  is_in_snowflake: true
+                  data_frequency: 1_HOUR
+                  source_url: http://oasis.caiso.com/mrioasis/logon.do
+                  is_published: true
+                  created_at_utc: '2023-04-20T07:00:37.935862Z'
+                  status: active
+                  popularity_rank: 46
+                - id: spp_ver_curtailments
+                  name: SPP VER Curtailments
+                  description: 'VER curtailment data in 5 minute intervals for SPP.
+
+                    Total VER curtailment (not per resource).'
+                  earliest_available_time_utc: '2014-03-01T06:00:00+00:00'
+                  latest_available_time_utc: '2025-05-19T04:55:00+00:00'
+                  source: spp
+                  last_checked_time_utc: '2025-05-19T19:12:06+00:00'
+                  primary_key_columns:
+                  - interval_start_utc
+                  time_index_column: interval_start_utc
+                  all_columns:
+                  - name: interval_start_utc
+                    type: TIMESTAMP
+                    is_numeric: false
+                    is_date: false
+                    is_datetime: true
+                  - name: interval_end_utc
+                    type: TIMESTAMP
+                    is_numeric: false
+                    is_date: false
+                    is_datetime: true
+                  - name: wind_redispatch_curtailments
+                    type: DOUBLE PRECISION
+                    is_numeric: true
+                    is_date: false
+                    is_datetime: false
+                  - name: wind_manual_curtailments
+                    type: DOUBLE PRECISION
+                    is_numeric: true
+                    is_date: false
+                    is_datetime: false
+                  - name: wind_curtailed_for_energy
+                    type: DOUBLE PRECISION
+                    is_numeric: true
+                    is_date: false
+                    is_datetime: false
+                  - name: solar_redispatch_curtailments
+                    type: DOUBLE PRECISION
+                    is_numeric: true
+                    is_date: false
+                    is_datetime: false
+                  - name: solar_manual_curtailments
+                    type: DOUBLE PRECISION
+                    is_numeric: true
+                    is_date: false
+                    is_datetime: false
+                  - name: solar_curtailed_for_energy
+                    type: DOUBLE PRECISION
+                    is_numeric: true
+                    is_date: false
+                    is_datetime: false
+                  number_of_rows_approximate: 1141332
+                  table_type: table
+                  is_in_snowflake: true
+                  data_frequency: 5_MINUTES
+                  source_url: https://marketplace.spp.org/pages/ver-curtailments
+                  is_published: true
+                  created_at_utc: '2023-05-17T17:21:02.118072Z'
+                  status: active
+                meta:
+                  page: 1
+                dataset_metadata:
+                  resample_conversion:
+                    1_MINUTE: 60
+                    5_MINUTES: 300
+                    15_MINUTES: 900
+                    1_HOUR: 3600
+                    1_DAY: 86400
+                    1_DAY_MARKET: 86400
+                    1_WEEK: 604800
+                    1_MONTH: 2592000
+                    1_YEAR: 31536000
+                    IRREGULAR: -1
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /datasets/{dataset_id}:
     get:
-      operationId: getDatasetMetadata
       tags:
       - Dataset Metadata
-      summary: Get dataset metadata
-      description: Fetch metadata for a single dataset - description, earliest and latest available time, columns, primary key columns, time index column, source URL, approximate row count, data frequency, and publication frequency.
+      summary: Get Dataset Metadata
+      description: Get a dataset and its metadata
+      operationId: get_dataset_metadata_v1_datasets__dataset_id__get
       parameters:
-      - $ref: '#/components/parameters/DatasetId'
+      - name: dataset_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Dataset Id
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: return_format
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/ReturnFormat'
+          description: The return format of the response
+          default: json
+        description: The return format of the response
+      - name: download
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Whether to download the file or not
+          default: false
+          title: Download
+        description: Whether to download the file or not
+      - name: json_schema
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/JSONSchema'
+          description: The json schema of the response
+          default: array-of-objects
+        description: The json schema of the response
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
       responses:
         '200':
-          description: Dataset metadata.
+          description: Successful response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/DatasetResponse'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
+              example:
+                id: ercot_lmp_by_bus
+                name: ERCOT LMP By Bus
+                description: "The Locational Marginal Price for each Electrical Bus in ERCOT,\nnormally produced by SCED every five minutes. \n\nThe location type present is:\n\n- *Electrical Bus*\n\nSee list of available locations\nby using the `ercot_electrical_buses` dataset."
+                earliest_available_time_utc: '2020-01-01T06:00:26Z'
+                latest_available_time_utc: '2025-05-19T19:25:12Z'
+                source: ercot
+                last_checked_time_utc: '2025-05-19T19:25:59.143841Z'
+                primary_key_columns:
+                - sced_timestamp_utc
+                - location
+                time_index_column: sced_timestamp_utc
+                subseries_index_column: location
+                all_columns:
+                - name: sced_timestamp_utc
+                  type: TIMESTAMP
+                  is_numeric: false
+                  is_date: false
+                  is_datetime: true
+                - name: market
+                  type: VARCHAR
+                  is_numeric: false
+                  is_date: false
+                  is_datetime: false
+                - name: location
+                  type: VARCHAR
+                  is_numeric: false
+                  is_date: false
+                  is_datetime: false
+                - name: location_type
+                  type: VARCHAR
+                  is_numeric: false
+                  is_date: false
+                  is_datetime: false
+                - name: lmp
+                  type: DOUBLE PRECISION
+                  is_numeric: true
+                  is_date: false
+                  is_datetime: false
+                number_of_rows_approximate: 8444429824
+                table_type: table
+                is_in_snowflake: true
+                data_frequency: ERCOT_SCED_RUN
+                source_url: https://www.ercot.com/mp/data-products/data-product-details?id=NP6-787-CD
+                is_published: true
+                created_at_utc: '2023-10-10T17:37:45.625368Z'
+                status: active
+                popularity_rank: 46
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
-  parameters:
-    DatasetId:
-      name: dataset_id
-      in: path
-      required: true
-      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
-      schema:
-        type: string
-    ReturnFormat:
-      name: return_format
-      in: query
-      description: The return format of the response.
-      schema:
-        type: string
-        enum:
-        - json
-        - csv
-        default: json
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: Missing API Key.
   schemas:
+    ReturnFormat:
+      type: string
+      enum:
+      - json
+      - csv
+      title: ReturnFormat
+    DatasetStatusEnum:
+      type: string
+      enum:
+      - retired
+      - active
+      - deprecated
+      title: DatasetStatusEnum
     ListDatasetsResponse:
-      type: object
       properties:
+        status_code:
+          type: integer
+          title: Status Code
         data:
-          type: array
           items:
             $ref: '#/components/schemas/DatasetResponse'
-    DatasetResponse:
+          type: array
+          title: Data
+        meta:
+          $ref: '#/components/schemas/MetadataResponse'
+        dataset_metadata:
+          $ref: '#/components/schemas/ListDatasetsDatasetMetadataResponse'
       type: object
+      required:
+      - status_code
+      - data
+      - meta
+      - dataset_metadata
+      title: ListDatasetsResponse
+      examples:
+      - first: test2
+        second: test
+    DatasetResponse:
       properties:
         id:
           type: string
-          example: ercot_spp_day_ahead_hourly
+          title: Id
         name:
           type: string
+          title: Name
         description:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
         earliest_available_time_utc:
-          type: string
-          format: date-time
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Earliest Available Time Utc
         latest_available_time_utc:
-          type: string
-          format: date-time
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Latest Available Time Utc
         source:
-          type: string
-        source_url:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source
         last_checked_time_utc:
-          type: string
-          format: date-time
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Checked Time Utc
         primary_key_columns:
-          type: array
-          items:
-            type: string
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Primary Key Columns
         publish_time_column:
-          type:
-          - string
-          - 'null'
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Publish Time Column
         time_index_column:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Time Index Column
         subseries_index_column:
-          type:
-          - string
-          - 'null'
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Subseries Index Column
         all_columns:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-              type:
-                type: string
-              description:
-                type: string
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ColumnResponse'
+            type: array
+          - type: 'null'
+          title: All Columns
         number_of_rows_approximate:
-          type: integer
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Number Of Rows Approximate
         table_type:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Table Type
+        is_in_snowflake:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is In Snowflake
         data_frequency:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Data Frequency
+        source_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Url
         publication_frequency:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Publication Frequency
         is_published:
-          type: boolean
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Published
+        created_at_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At Utc
         status:
-          type: string
+          anyOf:
+          - $ref: '#/components/schemas/DatasetStatusEnum'
+          - type: 'null'
         popularity_rank:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Popularity Rank
+      type: object
+      required:
+      - id
+      - name
+      - description
+      - earliest_available_time_utc
+      - latest_available_time_utc
+      - source
+      - last_checked_time_utc
+      - primary_key_columns
+      - publish_time_column
+      - time_index_column
+      - subseries_index_column
+      - all_columns
+      - number_of_rows_approximate
+      - table_type
+      - is_in_snowflake
+      - data_frequency
+      - source_url
+      - publication_frequency
+      - is_published
+      - created_at_utc
+      - status
+      title: DatasetResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    JSONSchema:
+      type: string
+      enum:
+      - array-of-objects
+      - array-of-arrays
+      title: JSONSchema
+    ListDatasetsDatasetMetadataResponse:
+      properties:
+        resample_conversion:
+          additionalProperties:
+            type: integer
+          type: object
+          title: Resample Conversion
+          default:
+            1_MINUTE: 60
+            5_MINUTES: 300
+            10_MINUTES: 600
+            15_MINUTES: 900
+            1_HOUR: 3600
+            1_DAY: 86400
+            1_DAY_MARKET: 86400
+            1_WEEK: 604800
+            1_MONTH: 2592000
+            1_YEAR: 31536000
+            IRREGULAR: -1
+      type: object
+      title: ListDatasetsDatasetMetadataResponse
+    MetadataResponse:
+      properties:
+        page:
           type: integer
-  securitySchemes:
-    apiKeyHeader:
-      type: apiKey
-      in: header
-      name: x-api-key
-      description: API key from https://www.gridstatus.io/settings/api.
-    apiKeyQuery:
-      type: apiKey
-      in: query
-      name: api_key
-      description: API key passed as a query parameter (alternative to the header).
+          title: Page
+        limit:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Limit
+        page_size:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Page Size
+        hasNextPage:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Hasnextpage
+        cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cursor
+      type: object
+      required:
+      - page
+      - limit
+      - page_size
+      - hasNextPage
+      - cursor
+      title: MetadataResponse
+    ColumnResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        type:
+          type: string
+          title: Type
+        is_numeric:
+          type: boolean
+          title: Is Numeric
+        is_date:
+          type: boolean
+          title: Is Date
+          default: false
+        is_datetime:
+          type: boolean
+          title: Is Datetime
+      type: object
+      required:
+      - name
+      - type
+      - is_numeric
+      - is_datetime
+      title: ColumnResponse
+externalDocs:
+  description: 'GridStatus documentation. Human docs: https://docs.gridstatus.io/developers. Ask a natural-language question (RAG search): append a URL-encoded question to https://docs.gridstatus.io/?ask='
+  url: https://docs.gridstatus.io/llms.txt
+x-tagGroups:
+- name: API Endpoints
+  tags:
+  - API Info
+  - Block Pricing Data
+  - Dataset Metadata
+  - Query Data
+  - Dataset Updates
+  - Reports
+x-rag-search:
+  description: Natural-language question answering over the GridStatus documentation. Substitute a URL-encoded question for {question}.
+  url_template: https://docs.gridstatus.io/?ask={question}
+  llms_txt: https://docs.gridstatus.io/llms.txt

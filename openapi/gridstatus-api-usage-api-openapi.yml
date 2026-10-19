@@ -1,88 +1,179 @@
 openapi: 3.2.0
 info:
   title: Grid Status API Usage API
-  description: The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP.
   version: 1.3.0
-  contact:
-    name: Grid Status
-    url: https://www.gridstatus.io
-    email: contact@gridstatus.io
 servers:
 - url: https://api.gridstatus.io/v1
-  description: Grid Status hosted API
-security:
-- apiKeyHeader: []
-- apiKeyQuery: []
 tags:
 - name: API Usage
-  description: Usage and limits for the current user or organization.
 paths:
   /api_usage:
     get:
-      operationId: getApiUsage
       tags:
       - API Usage
-      summary: Get API usage
-      description: Get API usage statistics and limits for the current user or organization - plan name, rows returned limit, requests limit, rows per response limit, per-second/minute/hour rate limits, and consumption for the current billing period.
+      summary: Get Api Usage Endpoint
+      description: Get API usage statistics and limits for the current user/organization.
+      operationId: get_api_usage_endpoint_v1_api_usage_get
+      parameters:
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
       responses:
         '200':
-          description: Usage statistics and plan limits.
+          description: Successful response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/APIUsageResponse'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+              example:
+                plan_name: Example Plan
+                limits:
+                  api_rows_returned_limit: 25000000
+                  api_requests_limit: 100000
+                  api_rows_per_response_limit: 90000
+                  per_second_api_rate_limit: 3
+                  per_minute_api_rate_limit: 20
+                  per_hour_api_rate_limit: 900
+                current_usage_period_start: '2025-10-01T00:00:00Z'
+                current_usage_period_end: '2025-11-01T00:00:00Z'
+                current_period_usage:
+                  total_requests: 30000
+                  total_api_rows_returned: 1500000
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    APIUsageLimits:
+    APIUsageResponse:
+      properties:
+        plan_name:
+          type: string
+          title: Plan Name
+        limits:
+          $ref: '#/components/schemas/APIUsageLimits'
+        current_usage_period_start:
+          type: string
+          format: date-time
+          title: Current Usage Period Start
+        current_usage_period_end:
+          type: string
+          format: date-time
+          title: Current Usage Period End
+        current_period_usage:
+          $ref: '#/components/schemas/CurrentPeriodUsage'
       type: object
+      required:
+      - plan_name
+      - limits
+      - current_usage_period_start
+      - current_usage_period_end
+      - current_period_usage
+      title: APIUsageResponse
+    CurrentPeriodUsage:
+      properties:
+        total_requests:
+          type: integer
+          title: Total Requests
+        total_api_rows_returned:
+          type: integer
+          title: Total Api Rows Returned
+      type: object
+      required:
+      - total_requests
+      - total_api_rows_returned
+      title: CurrentPeriodUsage
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    APIUsageLimits:
       properties:
         api_rows_returned_limit:
           type: integer
+          title: Api Rows Returned Limit
         api_requests_limit:
           type: integer
+          title: Api Requests Limit
         api_rows_per_response_limit:
           type: integer
+          title: Api Rows Per Response Limit
         per_second_api_rate_limit:
           type: integer
+          title: Per Second Api Rate Limit
         per_minute_api_rate_limit:
           type: integer
+          title: Per Minute Api Rate Limit
         per_hour_api_rate_limit:
           type: integer
-    APIUsageResponse:
+          title: Per Hour Api Rate Limit
       type: object
-      properties:
-        plan:
-          type: string
-        limits:
-          $ref: '#/components/schemas/APIUsageLimits'
-        current_period_usage:
-          type: object
-          properties:
-            total_requests:
-              type: integer
-            total_api_rows_returned:
-              type: integer
-  responses:
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: Missing API Key.
-  securitySchemes:
-    apiKeyHeader:
-      type: apiKey
-      in: header
-      name: x-api-key
-      description: API key from https://www.gridstatus.io/settings/api.
-    apiKeyQuery:
-      type: apiKey
-      in: query
-      name: api_key
-      description: API key passed as a query parameter (alternative to the header).
+      required:
+      - api_rows_returned_limit
+      - api_requests_limit
+      - api_rows_per_response_limit
+      - per_second_api_rate_limit
+      - per_minute_api_rate_limit
+      - per_hour_api_rate_limit
+      title: APIUsageLimits
+externalDocs:
+  description: 'GridStatus documentation. Human docs: https://docs.gridstatus.io/developers. Ask a natural-language question (RAG search): append a URL-encoded question to https://docs.gridstatus.io/?ask='
+  url: https://docs.gridstatus.io/llms.txt
+x-tagGroups:
+- name: API Endpoints
+  tags:
+  - API Info
+  - Block Pricing Data
+  - Dataset Metadata
+  - Query Data
+  - Dataset Updates
+  - Reports
+x-rag-search:
+  description: Natural-language question answering over the GridStatus documentation. Substitute a URL-encoded question for {question}.
+  url_template: https://docs.gridstatus.io/?ask={question}
+  llms_txt: https://docs.gridstatus.io/llms.txt

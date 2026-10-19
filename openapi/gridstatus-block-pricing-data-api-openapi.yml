@@ -1,77 +1,277 @@
 openapi: 3.2.0
 info:
   title: Grid Status Block Pricing Data API
-  description: The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP.
   version: 1.3.0
-  contact:
-    name: Grid Status
-    url: https://www.gridstatus.io
-    email: contact@gridstatus.io
 servers:
 - url: https://api.gridstatus.io/v1
-  description: Grid Status hosted API
-security:
-- apiKeyHeader: []
-- apiKeyQuery: []
 tags:
 - name: Block Pricing Data
-  description: Block-averaged prices for an ISO.
 paths:
   /block-pricing/{iso}:
     get:
-      operationId: getBlockPricing
       tags:
       - Block Pricing Data
-      summary: Get block pricing
-      description: Returns volume-weighted block-averaged prices for an ISO over the requested date range. The response is a list of columns - daily columns keyed by ISO date plus appended summary columns such as MTD (month-to-date) and a Month-Year label for each full month spanned.
+      summary: Get Block Pricing
+      description: 'Returns block-averaged prices for an ISO over the requested date range.
+
+
+        The response is a list of columns. Daily columns (keyed by ISO date) cover the requested range, and additional summary columns are appended: `MTD` (month-to-date) and a `Month-Year` label for each full month spanned. Each column''s `value` is the volume-weighted average price for the block over that window.
+
+
+        Each datum includes `pct_change`, the percent change of `value` relative to the previous period for the same market and block (prior market day for daily columns; prior calendar month for summary columns). It is null when the previous period has no value or when the prior value is zero.
+
+
+        The `complete` flag indicates whether every interval in the window has reported data; it is `false` for in-progress windows such as the current day or month-to-date.'
+      operationId: get_block_pricing_v1_block_pricing__iso__get
       parameters:
-      - $ref: '#/components/parameters/Iso'
+      - name: iso
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ISOEnum'
+          description: ISO identifier used to resolve the backing block pricing dataset.
+        description: ISO identifier used to resolve the backing block pricing dataset.
+      - name: params
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/BlockPricingQueryParams'
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
       responses:
         '200':
-          description: Block-averaged prices for the ISO.
+          description: Successful response
           content:
             application/json:
               schema:
-                type: object
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                type: array
+                items:
+                  $ref: '#/components/schemas/BlockPricingDateGroup'
+                title: Response Get Block Pricing V1 Block Pricing  Iso  Get
+              example:
+              - date: '2024-01-01'
+                is_nerc_holiday: true
+                data:
+                - market: da
+                  block: 7x24
+                  value: 31.42
+                  complete: true
+                - market: da
+                  block: on-peak
+                  value: 38.15
+                  complete: true
+                - market: da
+                  block: off-peak
+                  value: 24.69
+                  complete: true
+                - market: rt
+                  block: 7x24
+                  value: 29.87
+                  complete: true
+              - date: '2024-01-02'
+                is_nerc_holiday: false
+                data:
+                - market: da
+                  block: 7x24
+                  value: 33.1
+                  pct_change: 5.35
+                  complete: true
+                - market: rt
+                  block: 7x24
+                  value: 30.55
+                  pct_change: 2.28
+                  complete: false
+              - date: MTD
+                is_nerc_holiday: false
+                data:
+                - market: da
+                  block: 7x24
+                  value: 32.26
+                  complete: false
+                - market: da
+                  block: on-peak
+                  value: 39.04
+                  complete: false
+              - date: Jan-2024
+                is_nerc_holiday: false
+                data:
+                - market: da
+                  block: 7x24
+                  value: 32.26
+                  complete: false
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
-  parameters:
-    Iso:
-      name: iso
-      in: path
-      required: true
-      description: ISO/RTO identifier.
-      schema:
-        type: string
-        enum:
-        - CAISO
-        - ERCOT
-        - IESO
-        - ISONE
-        - MISO
-        - NYISO
-        - PJM
-        - SPP
-  responses:
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: Missing API Key.
-  securitySchemes:
-    apiKeyHeader:
-      type: apiKey
-      in: header
-      name: x-api-key
-      description: API key from https://www.gridstatus.io/settings/api.
-    apiKeyQuery:
-      type: apiKey
-      in: query
-      name: api_key
-      description: API key passed as a query parameter (alternative to the header).
+  schemas:
+    ISOEnum:
+      type: string
+      enum:
+      - CAISO
+      - ERCOT
+      - IESO
+      - ISONE
+      - MISO
+      - NYISO
+      - PJM
+      - SPP
+      title: ISOEnum
+    BlockPricingQueryParams:
+      properties:
+        start_date:
+          type: string
+          format: date
+          title: Start Date
+          description: Start of date range (inclusive), interpreted in the ISO market timezone.
+        end_date:
+          type: string
+          format: date
+          title: End Date
+          description: End of date range (exclusive), interpreted in the ISO market timezone.
+        location:
+          type: string
+          title: Location
+          description: Location filter.
+        market:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Market
+          description: 'Optional market filter. Allowed values: "da" or "rt".'
+        blocks:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Blocks
+          description: 'Optional comma-separated list of block values. Allowed values: 7x24, 7x8, 2x16h, on-peak, off-peak.'
+      type: object
+      required:
+      - start_date
+      - end_date
+      - location
+      title: BlockPricingQueryParams
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    BlockPricingDatum:
+      properties:
+        market:
+          type: string
+          title: Market
+          description: Market the value is for ("da" or "rt").
+        block:
+          type: string
+          title: Block
+          description: Block the value is for (e.g. 7x24, on-peak, off-peak).
+        value:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Value
+          description: Volume-weighted average price for the block over the column's window, or null when no data is available.
+        pct_change:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Pct Change
+          description: Percent change of `value` relative to the previous period for the same market and block (e.g. the prior market day for daily columns, or the prior calendar month for summary columns). Null when the previous period has no value or when the prior value is zero.
+        complete:
+          type: boolean
+          title: Complete
+          description: Whether every interval in the column's window has reported data. False for in-progress windows (e.g. the current day or month-to-date).
+      type: object
+      required:
+      - market
+      - block
+      - value
+      - pct_change
+      - complete
+      title: BlockPricingDatum
+      description: A single block's value for one column (a day or a summary period).
+    BlockPricingDateGroup:
+      properties:
+        date:
+          type: string
+          title: Date
+          description: 'Column identifier: an ISO date (YYYY-MM-DD) for a daily column, "MTD" for month-to-date, or a "Month-Year" label for a full-month summary.'
+        is_nerc_holiday:
+          type: boolean
+          title: Is Nerc Holiday
+          description: Whether the daily column is an observed NERC holiday. Sunday holidays are observed on Monday. False for summary columns.
+          default: false
+        data:
+          items:
+            $ref: '#/components/schemas/BlockPricingDatum'
+          type: array
+          title: Data
+          description: Block values for this column, one entry per market/block.
+      type: object
+      required:
+      - date
+      - data
+      title: BlockPricingDateGroup
+      description: All block values for a single response column.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+externalDocs:
+  description: 'GridStatus documentation. Human docs: https://docs.gridstatus.io/developers. Ask a natural-language question (RAG search): append a URL-encoded question to https://docs.gridstatus.io/?ask='
+  url: https://docs.gridstatus.io/llms.txt
+x-tagGroups:
+- name: API Endpoints
+  tags:
+  - API Info
+  - Block Pricing Data
+  - Dataset Metadata
+  - Query Data
+  - Dataset Updates
+  - Reports
+x-rag-search:
+  description: Natural-language question answering over the GridStatus documentation. Substitute a URL-encoded question for {question}.
+  url_template: https://docs.gridstatus.io/?ask={question}
+  llms_txt: https://docs.gridstatus.io/llms.txt

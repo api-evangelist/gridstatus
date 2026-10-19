@@ -1,33 +1,21 @@
 openapi: 3.2.0
 info:
   title: Grid Status API Info API
-  description: The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP.
   version: 1.3.0
-  contact:
-    name: Grid Status
-    url: https://www.gridstatus.io
-    email: contact@gridstatus.io
 servers:
 - url: https://api.gridstatus.io/v1
-  description: Grid Status hosted API
-security:
-- apiKeyHeader: []
-- apiKeyQuery: []
 tags:
 - name: API Info
-  description: API name and version.
 paths:
   /:
     get:
-      operationId: apiInfo
       tags:
       - API Info
       summary: API Info
-      description: Returns the API name and version.
-      security: []
+      operationId: api_info_v1__get
       responses:
         '200':
-          description: API name and version.
+          description: Successful Response
           content:
             application/json:
               schema:
@@ -35,25 +23,34 @@ paths:
 components:
   schemas:
     APIInfoResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        version:
+          type: string
+          title: Version
       type: object
       required:
       - name
       - version
-      properties:
-        name:
-          type: string
-          example: Grid Status API
-        version:
-          type: string
-          example: 1.3.0
-  securitySchemes:
-    apiKeyHeader:
-      type: apiKey
-      in: header
-      name: x-api-key
-      description: API key from https://www.gridstatus.io/settings/api.
-    apiKeyQuery:
-      type: apiKey
-      in: query
-      name: api_key
-      description: API key passed as a query parameter (alternative to the header).
+      title: APIInfoResponse
+      example:
+        name: Grid Status API
+        version: 1.3.0
+externalDocs:
+  description: 'GridStatus documentation. Human docs: https://docs.gridstatus.io/developers. Ask a natural-language question (RAG search): append a URL-encoded question to https://docs.gridstatus.io/?ask='
+  url: https://docs.gridstatus.io/llms.txt
+x-tagGroups:
+- name: API Endpoints
+  tags:
+  - API Info
+  - Block Pricing Data
+  - Dataset Metadata
+  - Query Data
+  - Dataset Updates
+  - Reports
+x-rag-search:
+  description: Natural-language question answering over the GridStatus documentation. Substitute a URL-encoded question for {question}.
+  url_template: https://docs.gridstatus.io/?ask={question}
+  llms_txt: https://docs.gridstatus.io/llms.txt

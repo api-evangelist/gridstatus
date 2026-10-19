@@ -1,0 +1,12 @@
+{
+ "url": "https://api.gridstatus.io/openapi.json",
+ "final": "https://api.gridstatus.io/openapi.json",
+ "status": 200,
+ "content_type": "application/json",
+ "bytes": 194248,
+ "sha256": "1da702779a3c6270a91207a4a25edd0c219895f6fe8f2d220611843c8d9e7f69",
+ "fetched_at": "2026-10-19",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "re-archived: the provider's current document replaced a stale archive (roadmap#793); the old files are in openapi/_superseded/2026-10-19-stale"
+}

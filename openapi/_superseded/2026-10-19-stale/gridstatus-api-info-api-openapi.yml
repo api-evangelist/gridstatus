@@ -1,0 +1,59 @@
+openapi: 3.2.0
+info:
+  title: Grid Status API Info API
+  description: The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP.
+  version: 1.3.0
+  contact:
+    name: Grid Status
+    url: https://www.gridstatus.io
+    email: contact@gridstatus.io
+servers:
+- url: https://api.gridstatus.io/v1
+  description: Grid Status hosted API
+security:
+- apiKeyHeader: []
+- apiKeyQuery: []
+tags:
+- name: API Info
+  description: API name and version.
+paths:
+  /:
+    get:
+      operationId: apiInfo
+      tags:
+      - API Info
+      summary: API Info
+      description: Returns the API name and version.
+      security: []
+      responses:
+        '200':
+          description: API name and version.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIInfoResponse'
+components:
+  schemas:
+    APIInfoResponse:
+      type: object
+      required:
+      - name
+      - version
+      properties:
+        name:
+          type: string
+          example: Grid Status API
+        version:
+          type: string
+          example: 1.3.0
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key from https://www.gridstatus.io/settings/api.
+    apiKeyQuery:
+      type: apiKey
+      in: query
+      name: api_key
+      description: API key passed as a query parameter (alternative to the header).

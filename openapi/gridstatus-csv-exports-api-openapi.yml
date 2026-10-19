@@ -1,120 +1,293 @@
 openapi: 3.2.0
 info:
   title: Grid Status CSV Exports API
-  description: The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP.
   version: 1.3.0
-  contact:
-    name: Grid Status
-    url: https://www.gridstatus.io
-    email: contact@gridstatus.io
 servers:
 - url: https://api.gridstatus.io/v1
-  description: Grid Status hosted API
-security:
-- apiKeyHeader: []
-- apiKeyQuery: []
 tags:
 - name: CSV Exports
-  description: Bulk per-day CSV export files on S3.
 paths:
-  /csv-exports/{dataset_id}:
-    get:
-      operationId: listCsvExports
-      tags:
-      - CSV Exports
-      summary: List available bulk export files for a dataset
-      description: List the per-day CSV export files available on S3 for a dataset. Each entry includes the partition date, object size, and last-modified timestamp.
-      parameters:
-      - $ref: '#/components/parameters/DatasetId'
-      responses:
-        '200':
-          description: Available bulk export files.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DatasetExportsListResponse'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
   /csv-exports/{dataset_id}/{export_date}:
     get:
-      operationId: getCsvExportUrl
       tags:
       - CSV Exports
       summary: Generate a presigned S3 URL for a bulk export file
-      description: Generate a presigned S3 URL to download a specific per-day export file.
+      description: 'Return a time-limited presigned URL for a bulk export object on S3.
+
+
+        Caller supplies dataset id, date, and (optionally) file type; the server
+
+        constructs the S3 key per the layout documented in
+
+        `gitbook/bulk-csv-download/folder-structure.md`.'
+      operationId: get_export_presigned_url_v1_csv_exports__dataset_id___export_date__get
       parameters:
-      - $ref: '#/components/parameters/DatasetId'
+      - name: dataset_id
+        in: path
+        required: true
+        schema:
+          type: string
+          description: Dataset id, e.g. `caiso_lmp_day_ahead_hourly`.
+          title: Dataset Id
+        description: Dataset id, e.g. `caiso_lmp_day_ahead_hourly`.
       - name: export_date
         in: path
         required: true
-        description: The partition date of the export file (ISO 8601 date).
         schema:
           type: string
           format: date
+          description: ISO 8601 date of the partition, e.g. `2025-03-14`.
+          title: Export Date
+        description: ISO 8601 date of the partition, e.g. `2025-03-14`.
+      - name: file_type
+        in: query
+        required: false
+        schema:
+          const: csv
+          type: string
+          description: File format. Currently only `csv` (gzipped) is available.
+          default: csv
+          title: File Type
+        description: File format. Currently only `csv` (gzipped) is available.
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
       responses:
         '200':
-          description: Presigned URL for the export file.
+          description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PresignedUrlResponse'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-components:
-  parameters:
-    DatasetId:
-      name: dataset_id
-      in: path
-      required: true
-      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
-      schema:
-        type: string
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: Missing API Key.
-  schemas:
-    DatasetExportsListResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            properties:
-              date:
-                type: string
-                format: date
-              size_bytes:
-                type: integer
-              last_modified_utc:
-                type: string
-                format: date-time
-    PresignedUrlResponse:
-      type: object
-      properties:
-        url:
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /csv-exports/{dataset_id}:
+    get:
+      tags:
+      - CSV Exports
+      summary: List available bulk export files for a dataset
+      description: 'List the per-day export files available on S3 for a dataset.
+
+
+        Each entry includes the partition date, object size, and last-modified
+
+        timestamp; combine with `GET /{dataset_id}/{date}` to fetch a presigned
+
+        URL for any specific file.'
+      operationId: list_dataset_exports_v1_csv_exports__dataset_id__get
+      parameters:
+      - name: dataset_id
+        in: path
+        required: true
+        schema:
           type: string
-          description: Presigned S3 URL for downloading the export file.
-  securitySchemes:
-    apiKeyHeader:
-      type: apiKey
-      in: header
-      name: x-api-key
-      description: API key from https://www.gridstatus.io/settings/api.
-    apiKeyQuery:
-      type: apiKey
-      in: query
-      name: api_key
-      description: API key passed as a query parameter (alternative to the header).
+          description: Dataset id, e.g. `caiso_lmp_day_ahead_hourly`.
+          title: Dataset Id
+        description: Dataset id, e.g. `caiso_lmp_day_ahead_hourly`.
+      - name: year
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+            maximum: 9999
+            minimum: 1900
+          - type: 'null'
+          description: Optional. Restrict the listing to a single year.
+          title: Year
+        description: Optional. Restrict the listing to a single year.
+      - name: month
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+            maximum: 12
+            minimum: 1
+          - type: 'null'
+          description: Optional. Restrict the listing to a single month. Requires `year`.
+          title: Month
+        description: Optional. Restrict the listing to a single month. Requires `year`.
+      - name: file_type
+        in: query
+        required: false
+        schema:
+          const: csv
+          type: string
+          description: File format to list. Currently only `csv` (gzipped).
+          default: csv
+          title: File Type
+        description: File format to list. Currently only `csv` (gzipped).
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetExportsListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    PresignedUrlResponse:
+      properties:
+        presigned_url:
+          type: string
+          title: Presigned Url
+          description: Time-limited HTTPS URL to download the requested file.
+        expires_in_seconds:
+          type: integer
+          title: Expires In Seconds
+          description: Number of seconds the presigned URL is valid for.
+        bucket:
+          type: string
+          title: Bucket
+          description: S3 bucket the object lives in.
+        object_key:
+          type: string
+          title: Object Key
+          description: S3 object key the URL points to.
+      type: object
+      required:
+      - presigned_url
+      - expires_in_seconds
+      - bucket
+      - object_key
+      title: PresignedUrlResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    DatasetExportFile:
+      properties:
+        date:
+          type: string
+          format: date
+          title: Date
+          description: Partition date for this file.
+        size_bytes:
+          type: integer
+          title: Size Bytes
+          description: Object size in bytes.
+        last_modified:
+          type: string
+          format: date-time
+          title: Last Modified
+          description: When the object was last written by the export pipeline.
+      type: object
+      required:
+      - date
+      - size_bytes
+      - last_modified
+      title: DatasetExportFile
+    DatasetExportsListResponse:
+      properties:
+        dataset_id:
+          type: string
+          title: Dataset Id
+        file_type:
+          type: string
+          const: csv
+          title: File Type
+        count:
+          type: integer
+          title: Count
+        files:
+          items:
+            $ref: '#/components/schemas/DatasetExportFile'
+          type: array
+          title: Files
+      type: object
+      required:
+      - dataset_id
+      - file_type
+      - count
+      - files
+      title: DatasetExportsListResponse
+externalDocs:
+  description: 'GridStatus documentation. Human docs: https://docs.gridstatus.io/developers. Ask a natural-language question (RAG search): append a URL-encoded question to https://docs.gridstatus.io/?ask='
+  url: https://docs.gridstatus.io/llms.txt
+x-tagGroups:
+- name: API Endpoints
+  tags:
+  - API Info
+  - Block Pricing Data
+  - Dataset Metadata
+  - Query Data
+  - Dataset Updates
+  - Reports
+x-rag-search:
+  description: Natural-language question answering over the GridStatus documentation. Substitute a URL-encoded question for {question}.
+  url_template: https://docs.gridstatus.io/?ask={question}
+  llms_txt: https://docs.gridstatus.io/llms.txt

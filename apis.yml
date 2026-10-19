@@ -393,6 +393,16 @@ apis:
     url: https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started
   - type: APIReference
     url: https://docs.gridstatus.io/developers/api-reference/api-usage
+- aid: gridstatus:gridstatus-outages-api
+  name: Grid Status Outages API
+  description: The Outages API from Grid Status — 6 operation(s) for outages.
+  humanURL: https://docs.gridstatus.io/developers/api-reference/dataset-metadata
+  baseURL: https://api.gridstatus.io/v1
+  tags:
+  - Outages
+  properties:
+  - type: OpenAPI
+    url: openapi/gridstatus-outages-api-openapi.yml
 common:
 - type: AgenticAccess
   url: agentic-access/gridstatus-agentic-access.yml

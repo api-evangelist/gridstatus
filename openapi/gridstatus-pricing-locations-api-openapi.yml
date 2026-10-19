@@ -1,138 +1,462 @@
 openapi: 3.2.0
 info:
   title: Grid Status Pricing Locations API
-  description: The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP.
   version: 1.3.0
-  contact:
-    name: Grid Status
-    url: https://www.gridstatus.io
-    email: contact@gridstatus.io
 servers:
 - url: https://api.gridstatus.io/v1
-  description: Grid Status hosted API
-security:
-- apiKeyHeader: []
-- apiKeyQuery: []
 tags:
 - name: Pricing Locations
-  description: Nodes, hubs, and zones behind LMP datasets.
 paths:
   /pricing_locations:
     get:
-      operationId: listPricingLocations
       tags:
       - Pricing Locations
-      summary: List pricing locations
-      description: List pricing locations (nodes, hubs, and zones) behind LMP datasets.
+      summary: List Pricing Locations
+      description: 'Get a list of pricing locations with optional filtering by ISOs, zones,
+
+        zone types and a search term.
+
+
+        Args:
+
+        params: Query parameters for filtering pricing locations
+
+        sort_column: Column to sort by.
+
+        sort_order: Sort order - ''asc'' or ''desc''.'
+      operationId: list_pricing_locations_v1_pricing_locations_get
+      parameters:
+      - name: sort_column
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sort Column
+      - name: sort_order
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/OrderBy'
+          - type: 'null'
+          title: Sort Order
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Optional search term to filter locations by name
+          title: Search
+        description: Optional search term to filter locations by name
+      - name: isos
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Comma-separated list of market IDs to filter by
+          title: Isos
+        description: Comma-separated list of market IDs to filter by
+      - name: zones
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Comma-separated list of zones to filter by
+          title: Zones
+        description: Comma-separated list of zones to filter by
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Comma-separated list of statuses to filter by
+          title: Status
+        description: Comma-separated list of statuses to filter by
+      - name: location_types
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Comma-separated list of location types to filter by
+          title: Location Types
+        description: Comma-separated list of location types to filter by
+      - name: has_geo_data
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          description: Filter by whether locations have geographic data
+          title: Has Geo Data
+        description: Filter by whether locations have geographic data
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
       responses:
         '200':
-          description: A list of pricing locations.
+          description: Successful Response
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PricingLocationResponse'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                $ref: '#/components/schemas/FacetedSearchResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /pricing_locations/nearby:
     get:
-      operationId: listNearbyPricingLocations
       tags:
       - Pricing Locations
-      summary: List nearby pricing locations
-      description: Find pricing locations near a latitude/longitude point.
+      summary: List Nearby Pricing Locations
+      description: 'Get a list of pricing locations near the provided latitude/longitude
+
+        or gs_entity_id. User must provide either latitude and longitude or a
+
+        gs_entity_id, but not both.'
+      operationId: list_nearby_pricing_locations_v1_pricing_locations_nearby_get
       parameters:
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 20
+          title: Limit
       - name: latitude
         in: query
-        required: true
-        description: Latitude of the point of interest.
+        required: false
         schema:
-          type: number
+          anyOf:
+          - type: number
+            maximum: 90
+            minimum: -90
+          - type: 'null'
+          description: The latitude of the location to search
+          title: Latitude
+        description: The latitude of the location to search
       - name: longitude
         in: query
-        required: true
-        description: Longitude of the point of interest.
+        required: false
         schema:
-          type: number
+          anyOf:
+          - type: number
+            maximum: 180
+            minimum: -180
+          - type: 'null'
+          description: The longitude of the location to search
+          title: Longitude
+        description: The longitude of the location to search
+      - name: gs_entity_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: The GS entity ID of the location to search
+          title: Gs Entity Id
+        description: The GS entity ID of the location to search
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
       responses:
         '200':
-          description: Pricing locations near the point.
+          description: Successful Response
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PricingLocationResponse'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                  $ref: '#/components/schemas/NearbyPricingLocationItem'
+                title: Response List Nearby Pricing Locations V1 Pricing Locations Nearby Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /pricing_locations/{gs_entity_id}:
     get:
-      operationId: getPricingLocation
       tags:
       - Pricing Locations
-      summary: Get pricing location
-      description: Fetch a single pricing location by Grid Status entity ID.
+      summary: Get Pricing Location
+      description: Get data for a specific pricing location by its ID.
+      operationId: get_pricing_location_v1_pricing_locations__gs_entity_id__get
       parameters:
       - name: gs_entity_id
         in: path
         required: true
-        description: Grid Status entity ID of the pricing location.
         schema:
           type: string
+          title: Pricing Location
+          description: Name of the pricing location to query
+        description: Name of the pricing location to query
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
       responses:
         '200':
-          description: The pricing location.
+          description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PricingLocationResponse'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: Missing API Key.
   schemas:
     PricingLocationResponse:
-      type: object
       properties:
         gs_entity_id:
           type: string
-        name:
+          title: Gs Entity Id
+        location:
           type: string
-        iso:
-          type: string
+          title: Location
         location_type:
           type: string
+          title: Location Type
+        market_id:
+          type: string
+          title: Market Id
+        baa:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Baa
+        zone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Zone
+        zone_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Zone Type
         latitude:
-          type:
-          - number
-          - 'null'
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Latitude
         longitude:
-          type:
-          - number
-          - 'null'
-  securitySchemes:
-    apiKeyHeader:
-      type: apiKey
-      in: header
-      name: x-api-key
-      description: API key from https://www.gridstatus.io/settings/api.
-    apiKeyQuery:
-      type: apiKey
-      in: query
-      name: api_key
-      description: API key passed as a query parameter (alternative to the header).
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Longitude
+        pricing_datasets:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Pricing Datasets
+        earliest_seen_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Earliest Seen Utc
+        latest_seen_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Latest Seen Utc
+        status_threshold_days:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Status Threshold Days
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      type: object
+      required:
+      - gs_entity_id
+      - location
+      - location_type
+      - market_id
+      - baa
+      - zone
+      - zone_type
+      - latitude
+      - longitude
+      - earliest_seen_utc
+      - latest_seen_utc
+      - status_threshold_days
+      - status
+      title: PricingLocationResponse
+    FacetedSearchResponse:
+      properties:
+        items:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Items
+        total_items:
+          type: integer
+          title: Total Items
+        facets:
+          additionalProperties:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+          type: object
+          title: Facets
+      type: object
+      required:
+      - items
+      - total_items
+      - facets
+      title: FacetedSearchResponse
+      description: Response from get_items_and_facets containing items, total count, and facets.
+    NearbyPricingLocationItem:
+      properties:
+        gs_entity_id:
+          type: string
+          title: Gs Entity Id
+        location:
+          type: string
+          title: Location
+        market_id:
+          type: string
+          title: Market Id
+        distance_in_miles:
+          type: number
+          title: Distance In Miles
+      type: object
+      required:
+      - gs_entity_id
+      - location
+      - market_id
+      - distance_in_miles
+      title: NearbyPricingLocationItem
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    OrderBy:
+      type: string
+      enum:
+      - asc
+      - desc
+      title: OrderBy
+externalDocs:
+  description: 'GridStatus documentation. Human docs: https://docs.gridstatus.io/developers. Ask a natural-language question (RAG search): append a URL-encoded question to https://docs.gridstatus.io/?ask='
+  url: https://docs.gridstatus.io/llms.txt
+x-tagGroups:
+- name: API Endpoints
+  tags:
+  - API Info
+  - Block Pricing Data
+  - Dataset Metadata
+  - Query Data
+  - Dataset Updates
+  - Reports
+x-rag-search:
+  description: Natural-language question answering over the GridStatus documentation. Substitute a URL-encoded question for {question}.
+  url_template: https://docs.gridstatus.io/?ask={question}
+  llms_txt: https://docs.gridstatus.io/llms.txt

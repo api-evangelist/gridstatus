@@ -1,0 +1,85 @@
+openapi: 3.2.0
+info:
+  title: Grid Status Reports API
+  description: The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP.
+  version: 1.3.0
+  contact:
+    name: Grid Status
+    url: https://www.gridstatus.io
+    email: contact@gridstatus.io
+servers:
+- url: https://api.gridstatus.io/v1
+  description: Grid Status hosted API
+security:
+- apiKeyHeader: []
+- apiKeyQuery: []
+tags:
+- name: Reports
+  description: Daily peak reports (paid plans).
+paths:
+  /reports/daily_peak/{iso}:
+    get:
+      operationId: getDailyPeakReport
+      tags:
+      - Reports
+      summary: Get daily peak report
+      description: Daily peak report for the specified ISO on a given date, including peaks in day-ahead market LMP values per zone (first peak only when multiple peaks exist). Requires a paid Grid Status plan.
+      parameters:
+      - $ref: '#/components/parameters/Iso'
+      - name: date
+        in: query
+        description: The report date (ISO 8601 date).
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Daily peak report for the ISO.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Requires a paid Grid Status plan.
+components:
+  parameters:
+    Iso:
+      name: iso
+      in: path
+      required: true
+      description: ISO/RTO identifier.
+      schema:
+        type: string
+        enum:
+        - CAISO
+        - ERCOT
+        - IESO
+        - ISONE
+        - MISO
+        - NYISO
+        - PJM
+        - SPP
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: Missing API Key.
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key from https://www.gridstatus.io/settings/api.
+    apiKeyQuery:
+      type: apiKey
+      in: query
+      name: api_key
+      description: API key passed as a query parameter (alternative to the header).

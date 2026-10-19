@@ -1,76 +1,230 @@
 openapi: 3.2.0
 info:
   title: Grid Status Dataset Audit API
-  description: The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP.
   version: 1.3.0
-  contact:
-    name: Grid Status
-    url: https://www.gridstatus.io
-    email: contact@gridstatus.io
 servers:
 - url: https://api.gridstatus.io/v1
-  description: Grid Status hosted API
-security:
-- apiKeyHeader: []
-- apiKeyQuery: []
 tags:
 - name: Dataset Audit
-  description: Ingest audit history for a dataset.
 paths:
   /datasets/{dataset_id}/audit:
     get:
-      operationId: getDatasetAudit
       tags:
       - Dataset Audit
-      summary: Get dataset audit
-      description: Ingest audit history for a dataset.
+      summary: Get Dataset Audit
+      description: 'Returns audit data by market date for a given dataset
+
+
+        * market_date: The market date for which the audit data is being returned
+
+
+        * number_of_datapoints: The total number of rows
+
+
+        * number_of_unique_time_index_values: The total number of unique time index
+
+        values
+
+
+        * number_of_unique_subseries_index_values: The total number of unique
+
+        subseries index values
+
+
+        * number_of_unique_publish_times_on_publish_date: The total number of
+
+        unique publish time values where the publish time occurred on the given
+
+        market date'
+      operationId: get_dataset_audit_v1_datasets__dataset_id__audit_get
       parameters:
-      - $ref: '#/components/parameters/DatasetId'
+      - name: dataset_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Dataset Id
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: return_format
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/ReturnFormat'
+          description: The return format of the response
+          default: json
+        description: The return format of the response
+      - name: download
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Whether to download the file or not
+          default: false
+          title: Download
+        description: Whether to download the file or not
+      - name: json_schema
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/JSONSchema'
+          description: The json schema of the response
+          default: array-of-objects
+        description: The json schema of the response
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
       responses:
         '200':
-          description: Audit records for the dataset.
+          description: Successful response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/DatasetAuditResponse'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+              example:
+                status_code: 200
+                data:
+                - market_date: '2025-01-01'
+                  number_of_datapoints: 100
+                  number_of_unique_time_index_values: 100
+                  number_of_unique_subseries_index_values: 100
+                  number_of_unique_publish_times_on_publish_date: 100
+                - market_date: '2025-01-02'
+                  number_of_datapoints: 100
+                  number_of_unique_time_index_values: 100
+                  number_of_unique_subseries_index_values: 100
+                  number_of_unique_publish_times_on_publish_date: 100
+                meta:
+                  page: 1
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
-  parameters:
-    DatasetId:
-      name: dataset_id
-      in: path
-      required: true
-      description: ID of the dataset (for example ercot_spp_day_ahead_hourly).
-      schema:
-        type: string
   schemas:
+    ReturnFormat:
+      type: string
+      enum:
+      - json
+      - csv
+      title: ReturnFormat
     DatasetAuditResponse:
-      type: object
       properties:
+        status_code:
+          type: integer
+          title: Status Code
         data:
-          type: array
           items:
-            type: object
-  responses:
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: Missing API Key.
-  securitySchemes:
-    apiKeyHeader:
-      type: apiKey
-      in: header
-      name: x-api-key
-      description: API key from https://www.gridstatus.io/settings/api.
-    apiKeyQuery:
-      type: apiKey
-      in: query
-      name: api_key
-      description: API key passed as a query parameter (alternative to the header).
+            $ref: '#/components/schemas/DatasetAudit'
+          type: array
+          title: Data
+      type: object
+      required:
+      - status_code
+      - data
+      title: DatasetAuditResponse
+    DatasetAudit:
+      properties:
+        market_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Market Date
+        number_of_datapoints:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Number Of Datapoints
+        number_of_unique_time_index_values:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Number Of Unique Time Index Values
+        number_of_unique_subseries_index_values:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Number Of Unique Subseries Index Values
+        number_of_unique_publish_times_on_publish_date:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Number Of Unique Publish Times On Publish Date
+      type: object
+      required:
+      - market_date
+      - number_of_datapoints
+      - number_of_unique_time_index_values
+      - number_of_unique_subseries_index_values
+      - number_of_unique_publish_times_on_publish_date
+      title: DatasetAudit
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    JSONSchema:
+      type: string
+      enum:
+      - array-of-objects
+      - array-of-arrays
+      title: JSONSchema
+externalDocs:
+  description: 'GridStatus documentation. Human docs: https://docs.gridstatus.io/developers. Ask a natural-language question (RAG search): append a URL-encoded question to https://docs.gridstatus.io/?ask='
+  url: https://docs.gridstatus.io/llms.txt
+x-tagGroups:
+- name: API Endpoints
+  tags:
+  - API Info
+  - Block Pricing Data
+  - Dataset Metadata
+  - Query Data
+  - Dataset Updates
+  - Reports
+x-rag-search:
+  description: Natural-language question answering over the GridStatus documentation. Substitute a URL-encoded question for {question}.
+  url_template: https://docs.gridstatus.io/?ask={question}
+  llms_txt: https://docs.gridstatus.io/llms.txt

@@ -1,85 +1,514 @@
 openapi: 3.2.0
 info:
   title: Grid Status Reports API
-  description: The Grid Status hosted API provides programmatic access to United States and Canadian electricity grid and power market data across CAISO, ERCOT, IESO, ISONE, MISO, NYISO, PJM, and SPP.
   version: 1.3.0
-  contact:
-    name: Grid Status
-    url: https://www.gridstatus.io
-    email: contact@gridstatus.io
 servers:
 - url: https://api.gridstatus.io/v1
-  description: Grid Status hosted API
-security:
-- apiKeyHeader: []
-- apiKeyQuery: []
 tags:
 - name: Reports
-  description: Daily peak reports (paid plans).
 paths:
   /reports/daily_peak/{iso}:
     get:
-      operationId: getDailyPeakReport
       tags:
       - Reports
-      summary: Get daily peak report
-      description: Daily peak report for the specified ISO on a given date, including peaks in day-ahead market LMP values per zone (first peak only when multiple peaks exist). Requires a paid Grid Status plan.
+      summary: Get Daily Peak Report
+      description: 'Get a daily peak report for the specified ISO on the specified date. If multiple peaks in LMP values are found in the Day Ahead Market data for a given zone, only data for the first peak will be returned.
+
+
+        NOTE: You must be on a paid Grid Status plan to access this endpoint.'
+      operationId: get_daily_peak_report_v1_reports_daily_peak__iso__get
       parameters:
-      - $ref: '#/components/parameters/Iso'
+      - name: iso
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ISOEnum'
+          title: ISO Name
+          description: Name of the iso for which the report should be created
+        description: Name of the iso for which the report should be created
       - name: date
         in: query
-        description: The report date (ISO 8601 date).
+        required: true
         schema:
           type: string
           format: date
+          title: date
+          description: The date for which the report should be generated.
+        description: The date for which the report should be generated.
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
       responses:
         '200':
-          description: Daily peak report for the ISO.
+          description: Successful response
           content:
             application/json:
               schema:
-                type: object
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          description: Requires a paid Grid Status plan.
+                $ref: '#/components/schemas/PeakLoadReportResponse'
+              example:
+                ISO: PJM
+                market_date: '2025-05-16'
+                timezone: US/Eastern
+                peak_dam_lmp:
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: AECO
+                  location_type: ZONE
+                  lmp: 97.118751
+                  energy: 155.76
+                  congestion: -65.318232
+                  loss: 6.676983
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: AEP
+                  location_type: ZONE
+                  lmp: 97.395159
+                  energy: 155.76
+                  congestion: -54.431105
+                  loss: -3.933736
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: AEP-DAYTON HUB
+                  location_type: HUB
+                  lmp: 91.80928
+                  energy: 155.76
+                  congestion: -58.663862
+                  loss: -5.286858
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: AEP GEN HUB
+                  location_type: HUB
+                  lmp: 83.493421
+                  energy: 155.76
+                  congestion: -65.138947
+                  loss: -7.127632
+                - interval_start_market: '2025-05-16T16:00:00'
+                  interval_end_market: '2025-05-16T17:00:00'
+                  location: APS
+                  location_type: ZONE
+                  lmp: 89.160852
+                  energy: 144.19
+                  congestion: -58.616387
+                  loss: 3.587239
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: ATSI
+                  location_type: ZONE
+                  lmp: 92.365946
+                  energy: 155.76
+                  congestion: -63.106612
+                  loss: -0.287442
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: ATSI GEN HUB
+                  location_type: HUB
+                  lmp: 86.943864
+                  energy: 155.76
+                  congestion: -65.453409
+                  loss: -3.362727
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: BGE
+                  location_type: ZONE
+                  lmp: 195.448405
+                  energy: 155.76
+                  congestion: 28.636572
+                  loss: 11.051833
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: CHICAGO GEN HUB
+                  location_type: HUB
+                  lmp: 61.777
+                  energy: 155.76
+                  congestion: -80.126231
+                  loss: -13.856769
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: CHICAGO HUB
+                  location_type: HUB
+                  lmp: 65.470279
+                  energy: 155.76
+                  congestion: -79.369223
+                  loss: -10.920498
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: COMED
+                  location_type: ZONE
+                  lmp: 65.207782
+                  energy: 155.76
+                  congestion: -79.068823
+                  loss: -11.483395
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: DAY
+                  location_type: ZONE
+                  lmp: 103.381408
+                  energy: 155.76
+                  congestion: -50.764866
+                  loss: -1.613726
+                - interval_start_market: '2025-05-16T19:00:00'
+                  interval_end_market: '2025-05-16T20:00:00'
+                  location: DEOK
+                  location_type: ZONE
+                  lmp: 89.94213
+                  energy: 108.56
+                  congestion: -15.420282
+                  loss: -3.197588
+                - interval_start_market: '2025-05-16T15:00:00'
+                  interval_end_market: '2025-05-16T16:00:00'
+                  location: DOM
+                  location_type: ZONE
+                  lmp: 486.712458
+                  energy: 137.01
+                  congestion: 341.984566
+                  loss: 7.717892
+                - interval_start_market: '2025-05-16T19:00:00'
+                  interval_end_market: '2025-05-16T20:00:00'
+                  location: DOMINION HUB
+                  location_type: HUB
+                  lmp: 191.920648
+                  energy: 108.56
+                  congestion: 80.191854
+                  loss: 3.168794
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: DPL
+                  location_type: ZONE
+                  lmp: 112.420637
+                  energy: 155.76
+                  congestion: -52.112548
+                  loss: 8.773185
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: DUQ
+                  location_type: ZONE
+                  lmp: 83.736817
+                  energy: 155.76
+                  congestion: -70.621802
+                  loss: -1.401381
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: EASTERN HUB
+                  location_type: HUB
+                  lmp: 114.075813
+                  energy: 155.76
+                  congestion: -50.283271
+                  loss: 8.599084
+                - interval_start_market: '2025-05-16T19:00:00'
+                  interval_end_market: '2025-05-16T20:00:00'
+                  location: EKPC
+                  location_type: ZONE
+                  lmp: 88.626441
+                  energy: 108.56
+                  congestion: -14.0673
+                  loss: -5.866259
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: JCPL
+                  location_type: ZONE
+                  lmp: 88.978929
+                  energy: 155.76
+                  congestion: -69.921157
+                  loss: 3.140086
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: METED
+                  location_type: ZONE
+                  lmp: 115.99368
+                  energy: 155.76
+                  congestion: -43.41339
+                  loss: 3.64707
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: MID-ATL/APS
+                  location_type: ZONE
+                  lmp: 209.16278
+                  energy: 155.76
+                  congestion: 42.553516
+                  loss: 10.849265
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: NEW JERSEY HUB
+                  location_type: HUB
+                  lmp: 89.631444
+                  energy: 155.76
+                  congestion: -69.848054
+                  loss: 3.719498
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: N ILLINOIS HUB
+                  location_type: HUB
+                  lmp: 64.797684
+                  energy: 155.76
+                  congestion: -78.77356
+                  loss: -12.188756
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: OHIO HUB
+                  location_type: HUB
+                  lmp: 92.687787
+                  energy: 155.76
+                  congestion: -57.230401
+                  loss: -5.841812
+                - interval_start_market: '2025-05-16T19:00:00'
+                  interval_end_market: '2025-05-16T20:00:00'
+                  location: OVEC
+                  location_type: ZONE
+                  lmp: 88.5
+                  energy: 108.56
+                  congestion: -15.33
+                  loss: -4.73
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: PECO
+                  location_type: ZONE
+                  lmp: 95.395634
+                  energy: 155.76
+                  congestion: -64.371292
+                  loss: 4.006926
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: PENELEC
+                  location_type: ZONE
+                  lmp: 80.674772
+                  energy: 155.76
+                  congestion: -78.416136
+                  loss: 3.330908
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: PEPCO
+                  location_type: ZONE
+                  lmp: 262.645429
+                  energy: 155.76
+                  congestion: 95.992709
+                  loss: 10.89272
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: PJM-RTO
+                  location_type: ZONE
+                  lmp: 144.182684
+                  energy: 155.76
+                  congestion: -14.599713
+                  loss: 3.022396
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: PPL
+                  location_type: ZONE
+                  lmp: 86.842633
+                  energy: 155.76
+                  congestion: -69.501223
+                  loss: 0.583856
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: PSEG
+                  location_type: ZONE
+                  lmp: 87.408946
+                  energy: 155.76
+                  congestion: -71.727043
+                  loss: 3.375989
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: RECO
+                  location_type: ZONE
+                  lmp: 84.78116
+                  energy: 155.76
+                  congestion: -74.6739
+                  loss: 3.69506
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: WESTERN HUB
+                  location_type: HUB
+                  lmp: 144.9218
+                  energy: 155.76
+                  congestion: -15.622671
+                  loss: 4.784471
+                - interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  location: WEST INT HUB
+                  location_type: HUB
+                  lmp: 147.074394
+                  energy: 155.76
+                  congestion: -7.775049
+                  loss: -0.910557
+                peak_load:
+                  interval_start_market: '2025-05-16T16:00:00'
+                  interval_end_market: '2025-05-16T17:00:00'
+                  load: 110462.82758333335
+                  net_load: 96116.07758333335
+                  fuel_mix.coal: 14757.583333333334
+                  fuel_mix.gas: 43558.25
+                  fuel_mix.hydro: 4504.916666666667
+                  fuel_mix.multiple_fuels: 1342.6666666666667
+                  fuel_mix.nuclear: 29601.5
+                  fuel_mix.oil: 1393.0833333333333
+                  fuel_mix.solar: 6843.5
+                  fuel_mix.storage: 2.75
+                  fuel_mix.wind: 7503.25
+                  fuel_mix.other_renewables: 526.6666666666666
+                peak_net_load:
+                  interval_start_market: '2025-05-16T17:00:00'
+                  interval_end_market: '2025-05-16T18:00:00'
+                  load: 110453.081
+                  net_load: 98153.49766666668
+                  fuel_mix.coal: 15300.75
+                  fuel_mix.gas: 45012.916666666664
+                  fuel_mix.hydro: 4407.25
+                  fuel_mix.multiple_fuels: 1417.25
+                  fuel_mix.nuclear: 29569
+                  fuel_mix.oil: 1466.5
+                  fuel_mix.solar: 4975.25
+                  fuel_mix.storage: 6.666666666666667
+                  fuel_mix.wind: 7324.333333333333
+                  fuel_mix.other_renewables: 536.1666666666666
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
-  parameters:
-    Iso:
-      name: iso
-      in: path
-      required: true
-      description: ISO/RTO identifier.
-      schema:
-        type: string
-        enum:
-        - CAISO
-        - ERCOT
-        - IESO
-        - ISONE
-        - MISO
-        - NYISO
-        - PJM
-        - SPP
-  responses:
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: Missing API Key.
-  securitySchemes:
-    apiKeyHeader:
-      type: apiKey
-      in: header
-      name: x-api-key
-      description: API key from https://www.gridstatus.io/settings/api.
-    apiKeyQuery:
-      type: apiKey
-      in: query
-      name: api_key
-      description: API key passed as a query parameter (alternative to the header).
+  schemas:
+    PeakDamLmpResponse:
+      additionalProperties:
+        anyOf:
+        - type: number
+        - type: string
+          format: date-time
+        - type: string
+        - type: 'null'
+      type: object
+    ISOEnum:
+      type: string
+      enum:
+      - CAISO
+      - ERCOT
+      - IESO
+      - ISONE
+      - MISO
+      - NYISO
+      - PJM
+      - SPP
+      title: ISOEnum
+    PeakLoadReportResponse:
+      properties:
+        ISO:
+          type: string
+          title: Iso
+        market_date:
+          type: string
+          format: date
+          title: Market Date
+        timezone:
+          type: string
+          title: Timezone
+        peak_dam_lmp:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/PeakDamLmpResponse'
+            type: array
+          - type: 'null'
+          title: Peak Dam Lmp
+        peak_load:
+          anyOf:
+          - $ref: '#/components/schemas/PeakIntervalResponse'
+          - type: 'null'
+        peak_net_load:
+          anyOf:
+          - $ref: '#/components/schemas/PeakIntervalResponse'
+          - type: 'null'
+      type: object
+      required:
+      - ISO
+      - market_date
+      - timezone
+      title: PeakLoadReportResponse
+    PeakIntervalResponse:
+      properties:
+        interval_start_market:
+          type: string
+          format: date-time
+          title: Interval Start Market
+        interval_end_market:
+          type: string
+          format: date-time
+          title: Interval End Market
+        load:
+          type: number
+          title: Load
+        net_load:
+          type: number
+          title: Net Load
+      additionalProperties:
+        anyOf:
+        - type: number
+        - type: 'null'
+      type: object
+      required:
+      - interval_start_market
+      - interval_end_market
+      - load
+      - net_load
+      title: PeakIntervalResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+externalDocs:
+  description: 'GridStatus documentation. Human docs: https://docs.gridstatus.io/developers. Ask a natural-language question (RAG search): append a URL-encoded question to https://docs.gridstatus.io/?ask='
+  url: https://docs.gridstatus.io/llms.txt
+x-tagGroups:
+- name: API Endpoints
+  tags:
+  - API Info
+  - Block Pricing Data
+  - Dataset Metadata
+  - Query Data
+  - Dataset Updates
+  - Reports
+x-rag-search:
+  description: Natural-language question answering over the GridStatus documentation. Substitute a URL-encoded question for {question}.
+  url_template: https://docs.gridstatus.io/?ask={question}
+  llms_txt: https://docs.gridstatus.io/llms.txt

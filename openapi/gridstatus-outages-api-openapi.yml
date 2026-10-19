@@ -1,0 +1,1410 @@
+openapi: 3.2.0
+info:
+  title: Grid Status Outages API
+  version: 1.3.0
+servers:
+- url: https://api.gridstatus.io/v1
+tags:
+- name: Outages
+paths:
+  /outages/ercot/active:
+    get:
+      tags:
+      - Outages
+      summary: List Ercot Active Outages
+      description: List ERCOT CEII transmission outages that overlap a time window.
+      operationId: list_ercot_active_outages_v1_outages_ercot_active_get
+      parameters:
+      - name: start_time
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: Inclusive start of a half-open window (ISO 8601, UTC). Use with end_time. Outages whose displayed interval overlaps [start_time, end_time) are returned. Also the reconstruction as-of cutoff (change times <= start_time).
+          title: Start Time
+        description: Inclusive start of a half-open window (ISO 8601, UTC). Use with end_time. Outages whose displayed interval overlaps [start_time, end_time) are returned. Also the reconstruction as-of cutoff (change times <= start_time).
+      - name: end_time
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: Exclusive end of a half-open window (ISO 8601, UTC).
+          title: End Time
+        description: Exclusive end of a half-open window (ISO 8601, UTC).
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Optional inclusive lower bound on the outage's displayed current_interval_start_utc (ISO 8601, UTC). When omitted, outages that started at any time are included.
+          title: Start Date
+        description: Optional inclusive lower bound on the outage's displayed current_interval_start_utc (ISO 8601, UTC). When omitted, outages that started at any time are included.
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100000
+          minimum: 1
+          description: Maximum number of distinct outage identifiers to return. When more identifiers match, truncated is true and outages is trimmed to this limit.
+          default: 50000
+          title: Limit
+        description: Maximum number of distinct outage identifiers to return. When more identifiers match, truncated is true and outages is trimmed to this limit.
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ERCOTActiveOutagesResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /outages/{market_id}/active:
+    get:
+      tags:
+      - Outages
+      summary: List Active Outages
+      description: List scheduled transmission outages that overlap a time window.
+      operationId: list_active_outages_v1_outages__market_id__active_get
+      parameters:
+      - name: market_id
+        in: path
+        required: true
+        schema:
+          type: string
+          description: Market id (e.g. pjm). Determines outage + coordinates datasets.
+          title: Market Id
+        description: Market id (e.g. pjm). Determines outage + coordinates datasets.
+      - name: start_time
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: Inclusive start of a half-open window (ISO 8601, UTC). Use with end_time. Tickets whose displayed interval overlaps [start_time, end_time) are returned. Also the reconstruction as-of cutoff (version/change times <= start_time).
+          title: Start Time
+        description: Inclusive start of a half-open window (ISO 8601, UTC). Use with end_time. Tickets whose displayed interval overlaps [start_time, end_time) are returned. Also the reconstruction as-of cutoff (version/change times <= start_time).
+      - name: end_time
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: Exclusive end of a half-open window (ISO 8601, UTC).
+          title: End Time
+        description: Exclusive end of a half-open window (ISO 8601, UTC).
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Optional inclusive lower bound on the ticket's displayed current_interval_start_utc (ISO 8601, UTC). When omitted, outages that started at any time are included.
+          title: Start Date
+        description: Optional inclusive lower bound on the ticket's displayed current_interval_start_utc (ISO 8601, UTC). When omitted, outages that started at any time are included.
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100000
+          minimum: 1
+          description: Maximum number of tickets to return. When more tickets match, truncated is true and tickets is trimmed to this limit. Each returned ticket includes its full equipment list.
+          default: 50000
+          title: Limit
+        description: Maximum number of tickets to return. When more tickets match, truncated is true and tickets is trimmed to this limit. Each returned ticket includes its full equipment list.
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PJMActiveOutagesResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /outages/pjm/search:
+    get:
+      tags:
+      - Outages
+      summary: Search Pjm Outage Tickets
+      description: Search present PJM tickets whose latest reported start falls in a window.
+      operationId: search_pjm_outage_tickets_v1_outages_pjm_search_get
+      parameters:
+      - name: start_time
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: Inclusive start of a half-open window (ISO 8601, UTC). Tickets whose latest reported outage start falls in [start_time, end_time) are returned.
+          title: Start Time
+        description: Inclusive start of a half-open window (ISO 8601, UTC). Tickets whose latest reported outage start falls in [start_time, end_time) are returned.
+      - name: end_time
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          description: Exclusive end of a half-open window (ISO 8601, UTC).
+          title: End Time
+        description: Exclusive end of a half-open window (ISO 8601, UTC).
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            maxLength: 200
+          - type: 'null'
+          description: Case-insensitive match on ticket number, facility name, equipment name, or station name.
+          title: Search
+        description: Case-insensitive match on ticket number, facility name, equipment name, or station name.
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 1000
+          minimum: 1
+          description: Maximum number of tickets to return.
+          default: 1000
+          title: Limit
+        description: Maximum number of tickets to return.
+      - name: min_voltage_kv
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+            minimum: 0
+          - type: 'null'
+          description: Keep tickets that have present equipment at or above this voltage (kV). Equipment with unknown voltage does not match.
+          title: Min Voltage Kv
+        description: Keep tickets that have present equipment at or above this voltage (kV). Equipment with unknown voltage does not match.
+      - name: zones
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Comma-separated PJM zone codes. Empty means all zones.
+          title: Zones
+        description: Comma-separated PJM zone codes. Empty means all zones.
+      - name: equipment_types
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Comma-separated equipment types (LINE, XFMR, GEN, PS, CAP, BRKR, OTHER). Empty means all types. OTHER matches unnamed or unrecognized types.
+          title: Equipment Types
+        description: Comma-separated equipment types (LINE, XFMR, GEN, PS, CAP, BRKR, OTHER). Empty means all types. OTHER matches unnamed or unrecognized types.
+      - name: open_closed
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Ticket equipment state: both, open, or closed. A ticket is open when any present equipment has an open switching action.'
+          title: Open Closed
+        description: 'Ticket equipment state: both, open, or closed. A ticket is open when any present equipment has an open switching action.'
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PJMOutageSearchResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /outages/pjm/equipment:
+    get:
+      tags:
+      - Outages
+      summary: Search Pjm Equipment
+      description: 'Distinct PJM outage equipment.
+
+
+        A search term matches the equipment name and returns shorter names first.
+
+        An empty search returns the most recently changed equipment.'
+      operationId: search_pjm_equipment_v1_outages_pjm_equipment_get
+      parameters:
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            maxLength: 200
+          - type: 'null'
+          description: Case-insensitive words that must all appear in the equipment name, in any order. A dash or underscore matches any separator.
+          title: Search
+        description: Case-insensitive words that must all appear in the equipment name, in any order. A dash or underscore matches any separator.
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Maximum number of equipment rows to return.
+          default: 100
+          title: Limit
+        description: Maximum number of equipment rows to return.
+      - name: equipment_types
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Comma-separated equipment types (LINE, XFMR, GEN, PS, CAP, BRKR, LD, SD). Empty means all types.
+          title: Equipment Types
+        description: Comma-separated equipment types (LINE, XFMR, GEN, PS, CAP, BRKR, LD, SD). Empty means all types.
+      - name: min_voltage_kv
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+            minimum: 0
+          - type: 'null'
+          description: Minimum equipment voltage in kV. Equipment with unknown voltage is included.
+          title: Min Voltage Kv
+        description: Minimum equipment voltage in kV. Equipment with unknown voltage is included.
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PJMEquipmentSearchResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /outages/pjm/equipment/related-constraints:
+    get:
+      tags:
+      - Outages
+      summary: Get Pjm Equipment Related Constraints
+      description: 'Constraints that bound while this equipment was actually out.
+
+
+        Outage windows come from tickets that reached Active or Complete(d),
+
+        still list this equipment as present, and clip to actual start/end.
+
+        Unknown equipment returns 404.'
+      operationId: get_pjm_equipment_related_constraints_v1_outages_pjm_equipment_related_constraints_get
+      parameters:
+      - name: equipment_type
+        in: query
+        required: true
+        schema:
+          type: string
+          maxLength: 32
+          description: Equipment type abbreviation, or Unknown.
+          title: Equipment Type
+        description: Equipment type abbreviation, or Unknown.
+      - name: equipment_name
+        in: query
+        required: true
+        schema:
+          type: string
+          maxLength: 200
+          description: Equipment name.
+          title: Equipment Name
+        description: Equipment name.
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PJMRelatedConstraintsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /outages/pjm/{ticket_id}:
+    get:
+      tags:
+      - Outages
+      summary: Get Pjm Outage Ticket Detail
+      description: 'Return CDC histories for one PJM transmission outage ticket.
+
+
+        Newest change or version first in each list. Tickets with no versions
+
+        return 404.'
+      operationId: get_pjm_outage_ticket_detail_v1_outages_pjm__ticket_id__get
+      parameters:
+      - name: ticket_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          description: PJM transmission outage ticket number.
+          title: Ticket Id
+        description: PJM transmission outage ticket number.
+      - name: api_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (query)
+          title: Api Key
+        description: API key for authentication (query)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: API key for authentication (header)
+          title: X-Api-Key
+        description: API key for authentication (header)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PJMOutageTicketResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    PJMRelatedConstraint:
+      properties:
+        constraint_gs_entity_id:
+          type: string
+          title: Constraint Gs Entity Id
+        constraint_name:
+          type: string
+          title: Constraint Name
+        peak_abs_shadow_price:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Peak Abs Shadow Price
+        binding_rate:
+          type: number
+          title: Binding Rate
+        containment_percent:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Containment Percent
+        overlap_intervals:
+          type: integer
+          title: Overlap Intervals
+          default: 0
+        outage_binding_hours:
+          type: number
+          title: Outage Binding Hours
+          default: 0.0
+        outage_hours_while_binding:
+          type: number
+          title: Outage Hours While Binding
+          default: 0.0
+        outside_binding_hours:
+          type: number
+          title: Outside Binding Hours
+          default: 0.0
+        outage_mean_shadow_price:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Outage Mean Shadow Price
+        outside_mean_shadow_price:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Outside Mean Shadow Price
+        distance_miles:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Distance Miles
+        voltage_kv:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Voltage Kv
+        daily_binding:
+          items:
+            $ref: '#/components/schemas/PJMRelatedDailyBinding'
+          type: array
+          title: Daily Binding
+          default: []
+        start:
+          anyOf:
+          - $ref: '#/components/schemas/SubstationLocation'
+          - type: 'null'
+        end:
+          anyOf:
+          - $ref: '#/components/schemas/SubstationLocation'
+          - type: 'null'
+      type: object
+      required:
+      - constraint_gs_entity_id
+      - constraint_name
+      - binding_rate
+      title: PJMRelatedConstraint
+    PJMWindowChangeRow:
+      properties:
+        first_observed_time_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: First Observed Time Utc
+        ticket:
+          type: integer
+          title: Ticket
+        revision_time_utc:
+          type: string
+          format: date-time
+          title: Revision Time Utc
+        revision_sequence:
+          type: integer
+          title: Revision Sequence
+        interval_start_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Interval Start Utc
+        interval_end_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Interval End Utc
+      type: object
+      required:
+      - ticket
+      - revision_time_utc
+      - revision_sequence
+      title: PJMWindowChangeRow
+    PJMRelatedDailyBinding:
+      properties:
+        day_start_utc:
+          type: string
+          format: date-time
+          title: Day Start Utc
+        binding_intervals:
+          type: integer
+          title: Binding Intervals
+        peak_shadow_price:
+          type: number
+          title: Peak Shadow Price
+        shadow_price_sum:
+          type: number
+          title: Shadow Price Sum
+        absolute_cost:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Absolute Cost
+      type: object
+      required:
+      - day_start_utc
+      - binding_intervals
+      - peak_shadow_price
+      - shadow_price_sum
+      title: PJMRelatedDailyBinding
+    PJMCauseChangeRow:
+      properties:
+        change_time_utc:
+          type: string
+          format: date-time
+          title: Change Time Utc
+        ticket:
+          type: integer
+          title: Ticket
+        cause:
+          type: string
+          title: Cause
+        is_present:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Present
+      type: object
+      required:
+      - change_time_utc
+      - ticket
+      - cause
+      title: PJMCauseChangeRow
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    PJMActiveOutageTicket:
+      properties:
+        ticket:
+          type: integer
+          title: Ticket
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+        outage_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Outage Type
+        version_time_utc:
+          type: string
+          format: date-time
+          title: Version Time Utc
+        current_interval_start_utc:
+          type: string
+          format: date-time
+          title: Current Interval Start Utc
+        current_interval_end_utc:
+          type: string
+          format: date-time
+          title: Current Interval End Utc
+        actual_start_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Actual Start Utc
+        actual_end_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Actual End Utc
+        causes:
+          items:
+            type: string
+          type: array
+          title: Causes
+        equipment:
+          items:
+            $ref: '#/components/schemas/PJMActiveOutageEquipment'
+          type: array
+          title: Equipment
+      type: object
+      required:
+      - ticket
+      - version_time_utc
+      - current_interval_start_utc
+      - current_interval_end_utc
+      - causes
+      - equipment
+      title: PJMActiveOutageTicket
+    PJMOutageSearchHit:
+      properties:
+        ticket:
+          type: integer
+          title: Ticket
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+        open_closed:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Open Closed
+        outage_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Outage Type
+        report_time_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Report Time Utc
+        interval_start_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Interval Start Utc
+        interval_end_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Interval End Utc
+        facilities:
+          items:
+            type: string
+          type: array
+          title: Facilities
+        equipment_names:
+          items:
+            type: string
+          type: array
+          title: Equipment Names
+        stations:
+          items:
+            type: string
+          type: array
+          title: Stations
+      type: object
+      required:
+      - ticket
+      - facilities
+      - equipment_names
+      - stations
+      title: PJMOutageSearchHit
+    PJMOutageTicketResponse:
+      properties:
+        ticket:
+          type: integer
+          title: Ticket
+        cause_changes:
+          items:
+            $ref: '#/components/schemas/PJMCauseChangeRow'
+          type: array
+          title: Cause Changes
+        equipment_changes:
+          items:
+            $ref: '#/components/schemas/PJMEquipmentChangeRow'
+          type: array
+          title: Equipment Changes
+        status_changes:
+          items:
+            $ref: '#/components/schemas/PJMStatusChangeRow'
+          type: array
+          title: Status Changes
+        ticket_versions:
+          items:
+            $ref: '#/components/schemas/PJMOutageTicketVersionRow'
+          type: array
+          title: Ticket Versions
+        window_changes:
+          items:
+            $ref: '#/components/schemas/PJMWindowChangeRow'
+          type: array
+          title: Window Changes
+      type: object
+      required:
+      - ticket
+      - cause_changes
+      - equipment_changes
+      - status_changes
+      - ticket_versions
+      - window_changes
+      title: PJMOutageTicketResponse
+      description: CDC histories for one PJM transmission outage ticket.
+    PJMEquipmentChangeRow:
+      properties:
+        change_time_utc:
+          type: string
+          format: date-time
+          title: Change Time Utc
+        ticket:
+          type: integer
+          title: Ticket
+        zone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Zone
+        facility_name:
+          type: string
+          title: Facility Name
+        equipment_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Equipment Type
+        station_1:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Station 1
+        station_2:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Station 2
+        voltage:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Voltage
+        equipment_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Equipment Name
+        switching_action:
+          type: string
+          title: Switching Action
+        interval_start_utc:
+          type: string
+          format: date-time
+          title: Interval Start Utc
+        interval_end_utc:
+          type: string
+          format: date-time
+          title: Interval End Utc
+        is_present:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Present
+        from_substation:
+          anyOf:
+          - $ref: '#/components/schemas/SubstationLocation'
+          - type: 'null'
+        to_substation:
+          anyOf:
+          - $ref: '#/components/schemas/SubstationLocation'
+          - type: 'null'
+      type: object
+      required:
+      - change_time_utc
+      - ticket
+      - facility_name
+      - switching_action
+      - interval_start_utc
+      - interval_end_utc
+      title: PJMEquipmentChangeRow
+    ERCOTActiveOutagesResponse:
+      properties:
+        truncated:
+          type: boolean
+          title: Truncated
+        outages:
+          items:
+            $ref: '#/components/schemas/ERCOTActiveOutage'
+          type: array
+          title: Outages
+      type: object
+      required:
+      - truncated
+      - outages
+      title: ERCOTActiveOutagesResponse
+    PJMRelatedEquipmentLocation:
+      properties:
+        interval_start_utc:
+          type: string
+          format: date-time
+          title: Interval Start Utc
+        interval_end_utc:
+          type: string
+          format: date-time
+          title: Interval End Utc
+        voltage_kv:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Voltage Kv
+        from_substation:
+          anyOf:
+          - $ref: '#/components/schemas/SubstationLocation'
+          - type: 'null'
+        to_substation:
+          anyOf:
+          - $ref: '#/components/schemas/SubstationLocation'
+          - type: 'null'
+      type: object
+      required:
+      - interval_start_utc
+      - interval_end_utc
+      title: PJMRelatedEquipmentLocation
+      description: Latest mapped position for one piece of equipment.
+    PJMRelatedConstraintsResponse:
+      properties:
+        equipment_outage_hours:
+          type: number
+          title: Equipment Outage Hours
+        equipment_outage_count:
+          type: integer
+          title: Equipment Outage Count
+        equipment_outage_windows:
+          items:
+            $ref: '#/components/schemas/PJMRelatedInterval'
+          type: array
+          title: Equipment Outage Windows
+          default: []
+        constraints:
+          items:
+            $ref: '#/components/schemas/PJMRelatedConstraint'
+          type: array
+          title: Constraints
+        equipment_location:
+          anyOf:
+          - $ref: '#/components/schemas/PJMRelatedEquipmentLocation'
+          - type: 'null'
+      type: object
+      required:
+      - equipment_outage_hours
+      - equipment_outage_count
+      - constraints
+      title: PJMRelatedConstraintsResponse
+      description: Constraints that bound while one piece of outage equipment was out.
+    PJMRelatedInterval:
+      properties:
+        start_utc:
+          type: string
+          format: date-time
+          title: Start Utc
+        end_utc:
+          type: string
+          format: date-time
+          title: End Utc
+      type: object
+      required:
+      - start_utc
+      - end_utc
+      title: PJMRelatedInterval
+    PJMOutageTicketVersionRow:
+      properties:
+        version_time_utc:
+          type: string
+          format: date-time
+          title: Version Time Utc
+        ticket:
+          type: integer
+          title: Ticket
+        is_present:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Present
+        current_interval_start_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Current Interval Start Utc
+        current_interval_end_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Current Interval End Utc
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+        previous_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Previous Status
+        outage_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Outage Type
+        rtep:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Rtep
+        availability:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Availability
+        approval_risk:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Approval Risk
+        on_time:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: On Time
+        last_revised_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Revised Utc
+        last_evaluated_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Evaluated Utc
+      type: object
+      required:
+      - version_time_utc
+      - ticket
+      title: PJMOutageTicketVersionRow
+      description: One CDC revision of a PJM transmission outage ticket.
+    PJMEquipmentSearchHit:
+      properties:
+        equipment_type:
+          type: string
+          title: Equipment Type
+        equipment_name:
+          type: string
+          title: Equipment Name
+        voltage_kv:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Voltage Kv
+        latest_seen_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Latest Seen Utc
+      type: object
+      required:
+      - equipment_type
+      - equipment_name
+      title: PJMEquipmentSearchHit
+    PJMStatusChangeRow:
+      properties:
+        first_observed_time_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: First Observed Time Utc
+        ticket:
+          type: integer
+          title: Ticket
+        status_time_utc:
+          type: string
+          format: date-time
+          title: Status Time Utc
+        status_sequence:
+          type: integer
+          title: Status Sequence
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      type: object
+      required:
+      - ticket
+      - status_time_utc
+      - status_sequence
+      title: PJMStatusChangeRow
+    PJMOutageSearchResponse:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/PJMOutageSearchHit'
+          type: array
+          title: Results
+      type: object
+      required:
+      - results
+      title: PJMOutageSearchResponse
+    PJMActiveOutagesResponse:
+      properties:
+        truncated:
+          type: boolean
+          title: Truncated
+        tickets:
+          items:
+            $ref: '#/components/schemas/PJMActiveOutageTicket'
+          type: array
+          title: Tickets
+      type: object
+      required:
+      - truncated
+      - tickets
+      title: PJMActiveOutagesResponse
+    SubstationLocation:
+      properties:
+        latitude:
+          type: number
+          title: Latitude
+        longitude:
+          type: number
+          title: Longitude
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - latitude
+      - longitude
+      - name
+      title: SubstationLocation
+      description: Lat/lon and display name for a substation.
+    PJMActiveOutageEquipment:
+      properties:
+        zone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Zone
+        facility_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Facility Name
+        equipment_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Equipment Type
+        station_1:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Station 1
+        station_2:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Station 2
+        from_substation:
+          anyOf:
+          - $ref: '#/components/schemas/SubstationLocation'
+          - type: 'null'
+        to_substation:
+          anyOf:
+          - $ref: '#/components/schemas/SubstationLocation'
+          - type: 'null'
+        voltage:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Voltage
+        equipment_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Equipment Name
+        switching_action:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Switching Action
+        interval_start_utc:
+          type: string
+          format: date-time
+          title: Interval Start Utc
+        interval_end_utc:
+          type: string
+          format: date-time
+          title: Interval End Utc
+      type: object
+      required:
+      - interval_start_utc
+      - interval_end_utc
+      title: PJMActiveOutageEquipment
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PJMEquipmentSearchResponse:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/PJMEquipmentSearchHit'
+          type: array
+          title: Results
+      type: object
+      required:
+      - results
+      title: PJMEquipmentSearchResponse
+    ERCOTActiveOutage:
+      properties:
+        outage_identifier:
+          type: string
+          title: Outage Identifier
+        change_time_utc:
+          type: string
+          format: date-time
+          title: Change Time Utc
+        outage_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Outage Status
+        outage_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Outage Type
+        nature_of_work:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Nature Of Work
+        equipment_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Equipment Type
+        equipment_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Equipment Name
+        equipment_from_station_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Equipment From Station Name
+        equipment_to_station_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Equipment To Station Name
+        group_label:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Group Label
+        voltage_level:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Voltage Level
+        requestor_org_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Requestor Org Name
+        breaker_switch_normal_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Breaker Switch Normal Status
+        breaker_switch_outage_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Breaker Switch Outage Status
+        planned_start_date_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Planned Start Date Utc
+        planned_end_date_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Planned End Date Utc
+        actual_start_date_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Actual Start Date Utc
+        actual_end_date_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Actual End Date Utc
+        current_interval_start_utc:
+          type: string
+          format: date-time
+          title: Current Interval Start Utc
+        current_interval_end_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Current Interval End Utc
+        from_substation:
+          anyOf:
+          - $ref: '#/components/schemas/SubstationLocation'
+          - type: 'null'
+        to_substation:
+          anyOf:
+          - $ref: '#/components/schemas/SubstationLocation'
+          - type: 'null'
+      type: object
+      required:
+      - outage_identifier
+      - change_time_utc
+      - current_interval_start_utc
+      title: ERCOTActiveOutage
+externalDocs:
+  description: 'GridStatus documentation. Human docs: https://docs.gridstatus.io/developers. Ask a natural-language question (RAG search): append a URL-encoded question to https://docs.gridstatus.io/?ask='
+  url: https://docs.gridstatus.io/llms.txt
+x-tagGroups:
+- name: API Endpoints
+  tags:
+  - API Info
+  - Block Pricing Data
+  - Dataset Metadata
+  - Query Data
+  - Dataset Updates
+  - Reports
+x-rag-search:
+  description: Natural-language question answering over the GridStatus documentation. Substitute a URL-encoded question for {question}.
+  url_template: https://docs.gridstatus.io/?ask={question}
+  llms_txt: https://docs.gridstatus.io/llms.txt
