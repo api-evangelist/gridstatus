@@ -316,3 +316,9 @@ x-rag-search:
   description: Natural-language question answering over the GridStatus documentation. Substitute a URL-encoded question for {question}.
   url_template: https://docs.gridstatus.io/?ask={question}
   llms_txt: https://docs.gridstatus.io/llms.txt
+x-provenance:
+  method: harvested
+  publisher: Grid Status
+  source: https://api.gridstatus.io/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
