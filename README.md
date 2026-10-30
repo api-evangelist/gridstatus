@@ -1,4 +1,4 @@
-# Grid Status (gridstatus)
+# Grid Status
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,167 +64,146 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Grid Status is a United States electricity grid and power market data platform. The hosted Grid Status API (`api.gridstatus.io`) exposes hundreds of curated datasets - day-ahead and real-time LMP and settlement point prices, load and load forecasts, fuel mix, ancillary services, storage, and transmission constraints - across CAISO, ERCOT, PJM, MISO, NYISO, SPP, ISONE, and IESO through a uniform dataset query model. Grid Status also maintains the open-source `gridstatus` Python library (BSD-3-Clause) for pulling raw data directly from ISO/RTO sources, and the `gridstatusio` client for the hosted API.
+Grid Status is a United States electricity grid and power market data platform. The hosted Grid Status API (api.gridstatus.io) exposes hundreds of curated datasets - day-ahead and real-time LMP and settlement point prices, load and load forecasts, fuel mix, ancillary services, storage, and transmission constraints - across CAISO, ERCOT, PJM, MISO, NYISO, SPP, ISONE, and IESO through a uniform dataset query model authenticated with an API key. Grid Status also maintains the open-source gridstatus Python library (BSD-3-Clause) for pulling raw data directly from ISO/RTO sources, and the gridstatusio client for the hosted API.
 
-Access model: the hosted API requires an API key (from the [settings page](https://www.gridstatus.io/settings/api)) passed in the `x-api-key` header, with a free tier documented at 500,000 rows returned per month and paid plans that raise row and rate limits and unlock premium endpoints such as daily peak reports. The live OpenAPI 3.1 document is published at [api.gridstatus.io/openapi.json](https://api.gridstatus.io/openapi.json). Exact paid tier prices are only published on the JavaScript pricing page and are not reconciled in this entry.
+**Areas:** Day-Ahead Prices · Electricity · Grid Data · Energy Markets · LMP · Load · Fuel Mix · Open Source
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/gridstatus/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/gridstatus/refs/heads/main/apis.yml)
+## Grid Status on APIs.io
 
-## Tags
+Everything profiled for Grid Status is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/gridstatus/](https://apis.io/providers/gridstatus/)** — or go straight to one of the APIs or properties below.
 
-- Day-Ahead Prices
-- Electricity
-- Grid Data
-- Energy Markets
-- LMP
-- Load
-- Fuel Mix
-- Open Source
+### APIs (11)
 
-## Timestamps
+- [Grid Status API Info API](https://apis.io/apis/gridstatus/gridstatus-api-info-api/) — API name and version.
+- [Grid Status API Usage API](https://apis.io/apis/gridstatus/gridstatus-api-usage-api/) — Usage and limits for the current user or organization.
+- [Grid Status Block Pricing Data API](https://apis.io/apis/gridstatus/gridstatus-block-pricing-data-api/) — Block-averaged prices for an ISO.
+- [Grid Status Constraints API](https://apis.io/apis/gridstatus/gridstatus-constraints-api/) — Transmission constraints, binding activity, and shift factors.
+- [Grid Status CSV Exports API](https://apis.io/apis/gridstatus/gridstatus-csv-exports-api/) — Bulk per-day CSV export files on S3.
+- [Grid Status Dataset Audit API](https://apis.io/apis/gridstatus/gridstatus-dataset-audit-api/) — Ingest audit history for a dataset.
+- [Grid Status Dataset Metadata API](https://apis.io/apis/gridstatus/gridstatus-dataset-metadata-api/) — List datasets and fetch per-dataset metadata.
+- [Grid Status Dataset Updates API](https://apis.io/apis/gridstatus/gridstatus-dataset-updates-api/) — Recent row insert/update activity for a dataset.
+- [Grid Status Pricing Locations API](https://apis.io/apis/gridstatus/gridstatus-pricing-locations-api/) — Nodes, hubs, and zones behind LMP datasets.
+- [Grid Status Query Data API](https://apis.io/apis/gridstatus/gridstatus-query-data-api/) — Query dataset rows with filters, resampling, and pagination.
+- [Grid Status Reports API](https://apis.io/apis/gridstatus/gridstatus-reports-api/) — Daily peak reports (paid plans).
 
-- **Created:** 2026-07-11
-- **Modified:** 2026-07-11
+### Published properties
 
-## APIs
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-### Grid Status Datasets API
+#### MCP servers (1)
 
-Browse the Grid Status data catalog programmatically - list every published dataset you have access to, and fetch per-dataset metadata including description, earliest and latest available time, columns, primary keys, source URL, data frequency, and publication frequency. Audit and updates endpoints report ingest history and row-level insert/update counts per dataset.
+Model Context Protocol servers that expose the API to agents.
 
-- **Human URL:** [https://docs.gridstatus.io/developers/api-reference/dataset-metadata](https://docs.gridstatus.io/developers/api-reference/dataset-metadata)
-- **Base URL:** `https://api.gridstatus.io/v1`
+- [gridstatus](https://apis.io/servers/gridstatus/gridstatus/)
 
-#### Tags
+#### Agentic access (1)
 
-- Datasets
-- Metadata
-- Catalog
+Which operations an agent can call, which act, and which need a human in the loop.
 
-#### Properties
+- [Gridstatus Agentic Access](https://apis.io/agentic-access/gridstatus/gridstatus-agentic-access/)
 
-- [Documentation](https://docs.gridstatus.io/developers/getting-started)
-- [API Reference](https://docs.gridstatus.io/developers/api-reference/dataset-metadata)
-- [OpenAPI](openapi/gridstatus-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/gridstatus.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/gridstatus.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+#### Collections (12)
 
-### Grid Status Dataset Query API
+Postman and Open Collection request collections.
 
-The workhorse of the platform - query any dataset by ID (for example `ercot_spp_day_ahead_hourly`, `ercot_fuel_mix`, `caiso_load`, `caiso_lmp_real_time_5_min`, `pjm_lmp_real_time_5_min`, `ercot_as_prices`) with time-range and column filters, ordering, resampling to frequencies from 1 minute to 1 year, pagination with cursors, and JSON or CSV output. Covers day-ahead and real-time prices, kWh/MWh rates, load, fuel mix, storage, and balancing data across all supported ISOs.
+- [Grid Status API](https://apis.io/collections/gridstatus/open-gridstatus/)
+- [Grid Status API Info API](https://apis.io/collections/gridstatus/open-gridstatus-api-info-api/)
+- [Grid Status API Info API Usage API](https://apis.io/collections/gridstatus/open-gridstatus-api-usage-api/)
+- [Grid Status API Info Block Pricing Data API](https://apis.io/collections/gridstatus/open-gridstatus-block-pricing-data-api/)
+- [Grid Status API Info Constraints API](https://apis.io/collections/gridstatus/open-gridstatus-constraints-api/)
+- [Grid Status API Info CSV Exports API](https://apis.io/collections/gridstatus/open-gridstatus-csv-exports-api/)
+- [Grid Status API Info Dataset Audit API](https://apis.io/collections/gridstatus/open-gridstatus-dataset-audit-api/)
+- [Grid Status API Info Dataset Metadata API](https://apis.io/collections/gridstatus/open-gridstatus-dataset-metadata-api/)
+- [Grid Status API Info Dataset Updates API](https://apis.io/collections/gridstatus/open-gridstatus-dataset-updates-api/)
+- [Grid Status API Info Pricing Locations API](https://apis.io/collections/gridstatus/open-gridstatus-pricing-locations-api/)
+- [Grid Status API Info Query Data API](https://apis.io/collections/gridstatus/open-gridstatus-query-data-api/)
+- [Grid Status API Info Reports API](https://apis.io/collections/gridstatus/open-gridstatus-reports-api/)
 
-- **Human URL:** [https://docs.gridstatus.io/developers/api-reference/query-data](https://docs.gridstatus.io/developers/api-reference/query-data)
-- **Base URL:** `https://api.gridstatus.io/v1`
+#### Security (2)
 
-#### Tags
+Authentication, trust centre, and vulnerability disclosure.
 
-- Day-Ahead Prices
-- LMP
-- Load
-- Fuel Mix
+- [Gridstatus Authentication](https://apis.io/security/gridstatus/gridstatus-authentication/)
+- [Gridstatus Domain Security](https://apis.io/security/gridstatus/gridstatus-domain-security/)
 
-#### Properties
+#### Plans and pricing (1)
 
-- [Documentation](https://docs.gridstatus.io/developers/concepts/query-parameters)
-- [API Reference](https://docs.gridstatus.io/developers/api-reference/query-data)
-- [OpenAPI](openapi/gridstatus-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/gridstatus.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/gridstatus.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+Published plans, tiers and prices.
 
-### Grid Status Pricing Locations API
+- [Gridstatus Plans Pricing](https://apis.io/plans/gridstatus/gridstatus-plans-pricing/)
 
-Look up the pricing locations (nodes, hubs, and zones) behind LMP datasets - list locations, fetch a single location by Grid Status entity ID, and find pricing locations near a latitude/longitude point to map physical assets to the correct settlement location.
+#### Rate limits (1)
 
-- **Human URL:** [https://docs.gridstatus.io/developers/api-reference/pricing-locations](https://docs.gridstatus.io/developers/api-reference/pricing-locations)
-- **Base URL:** `https://api.gridstatus.io/v1`
+Published request limits.
 
-#### Tags
+- [Gridstatus Rate Limits](https://apis.io/rate-limits/gridstatus/gridstatus-rate-limits/)
 
-- Pricing Locations
-- Nodes
-- Hubs
+#### FinOps (1)
 
-#### Properties
+What the API costs to run, by operation.
 
-- [API Reference](https://docs.gridstatus.io/developers/api-reference/pricing-locations)
-- [OpenAPI](openapi/gridstatus-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/gridstatus.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/gridstatus.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Gridstatus Finops](https://apis.io/finops/gridstatus/gridstatus-finops/)
 
-### Grid Status Constraints API
+## Where to find this API
 
-Transmission constraint analytics - list constraints and contingencies, fetch binding intervals, binding counts and costs by period, constraint stats, heat maps, and shift factors both per constraint and per pricing location, for congestion analysis and constraint impact studies.
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-- **Human URL:** [https://docs.gridstatus.io/developers/api-reference/constraints](https://docs.gridstatus.io/developers/api-reference/constraints)
-- **Base URL:** `https://api.gridstatus.io/v1`
-
-#### Tags
-
-- Constraints
-- Congestion
-- Shift Factors
-
-#### Properties
-
-- [API Reference](https://docs.gridstatus.io/developers/api-reference/constraints)
-- [OpenAPI](openapi/gridstatus-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/gridstatus.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/gridstatus.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Grid Status Reports and Block Pricing API
-
-Pre-computed market summaries - volume-weighted block-averaged prices (daily plus month-to-date summaries) for an ISO over a date range, and daily peak reports of day-ahead market LMP peaks per zone (daily peak reports require a paid Grid Status plan).
-
-- **Human URL:** [https://docs.gridstatus.io/developers/api-reference/block-pricing-data](https://docs.gridstatus.io/developers/api-reference/block-pricing-data)
-- **Base URL:** `https://api.gridstatus.io/v1`
-
-#### Tags
-
-- Block Pricing
-- Reports
-- Day-Ahead Prices
-
-#### Properties
-
-- [Documentation](https://docs.gridstatus.io/developers/api-reference/block-pricing-data)
-- [API Reference](https://docs.gridstatus.io/developers/api-reference/reports)
-- [OpenAPI](openapi/gridstatus-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/gridstatus.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/gridstatus.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Grid Status Bulk Exports and Usage API
-
-Operational surface for heavy consumers - list per-day bulk CSV export files for a dataset and generate presigned S3 URLs to download them, and check your API usage (rows returned, requests, and per-second/minute/hour rate limits) against your plan for the current billing period.
-
-- **Human URL:** [https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started](https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started)
-- **Base URL:** `https://api.gridstatus.io/v1`
-
-#### Tags
-
-- CSV Exports
-- Bulk Data
-- API Usage
-
-#### Properties
-
-- [Documentation](https://docs.gridstatus.io/developers/bulk-csv-downloads/getting-started)
-- [API Reference](https://docs.gridstatus.io/developers/api-reference/api-usage)
-- [OpenAPI](openapi/gridstatus-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/gridstatus.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/gridstatus.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-## Common Properties
-
-- [GitHub Organization](https://github.com/gridstatus)
-- [LinkedIn](https://www.linkedin.com/company/grid-status)
 - [Website](https://www.gridstatus.io)
 - [Documentation](https://docs.gridstatus.io)
-- [Plans](plans/gridstatus-plans-pricing.yml)
-- [Rate Limits](rate-limits/gridstatus-rate-limits.yml)
-- [Fin Ops](finops/gridstatus-finops.yml)
 - [Blog](https://blog.gridstatus.io/rss/)
+- [GitHub](https://github.com/gridstatus)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 27.3** — thin · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 68.3 |
+| Contract quality | 47.3 |
+| Contract governance | 0.0 |
+| Operational transparency | 10.5 |
+| Developer ergonomics | 31.0 |
+| Access clarity | 7.9 |
+
+**Agent readiness 60.4** — agent-native
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | na |
+| MCP Server | verified |
+| Auth Clarity | served (partial credit) |
+| Idempotency | na |
+| Error Semantics | verified |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | derived (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | na |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | verified |
+| Dynamic Client Registration | yes |
+| Agentic Commerce | — |
+| Pagination Ratio | — |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 9.8** — Energy & Utilities
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/gridstatus/](https://apis.io/providers/gridstatus/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Grid Status: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/gridstatus/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
